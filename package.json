@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "postinstall": "copy node_modules\\swiftlatex\\dist\\swift*.js public && copy node_modules\\swiftlatex\\dist\\*.wasm public"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
