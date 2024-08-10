@@ -1,27 +1,28 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
-    react()
-    // viteStaticCopy({
-    //   targets: [
-    //     {
-    //       src: 'node_modules/swiftlatex/dist/swift*.js',
-    //       dest: 'public',
-    //     },
-    //     {
-    //       src: 'node_modules/swiftlatex/dist/*.wasm',
-    //       dest: 'public',
-    //     },
-    //   ],
-    // }),
+    react(),
+    VitePWA({
+      workbox: {
+        runtimeCaching: [
+          {
+            urlPattern: /.*\.wasm$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'wasm-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+              },
+            },
+          },
+        ],
+      },
+    })
   ],
-  // server: {
-  //   mimeTypes: {
-  //     'application/javascript': ['js'],
-  //     'application/wasm': ['wasm'], // Ensure .wasm files are served with the correct MIME type
-  //   },
-  // },
+
 });
