@@ -148,7 +148,7 @@ function LandingPage() {
                     </ul>
                     <div className="hidden items-center gap-4 lg:flex">
 
-                        <div onClick={()=>navigate('/user-page')} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-lg cursor-pointer">
+                        <div onClick={()=>navigate('/login')} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-lg cursor-pointer">
                             <div className='md:w-[6rem] bg-green-500 absolute h-12 z-20 rounded-lg inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
                             <div className=' absolute z-40 text-white'>Sign In</div>
                         </div>

@@ -1,197 +1,120 @@
-import React, { useEffect, useState } from 'react'
-import { Typography, Input, Button, Stepper, Step } from "@material-tailwind/react";
-import { EyeSlashIcon, EyeIcon, EnvelopeOpenIcon } from "@heroicons/react/24/solid";
-import { useNavigate } from 'react-router-dom';
-import { postApi } from '../api/api';
-import { BackgroundGradientAnimation } from '../utils/BackgroundGradientAnimation ';
-import { useLoading } from '../utils/LoadingContext';
-import toast from 'react-hot-toast';
+import { useState } from "react";
+import { Typography, Input, Button } from "@material-tailwind/react";
+import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [message, setMessage] = useState('');
-
+    const [passwordShown, setPasswordShown] = useState(false);
+    const togglePasswordVisiblity = () => setPasswordShown((cur) => !cur);
     const navigate = useNavigate();
-    const [step, setStep] = useState(0);
-    const [isNew, setIsnew] = useState(false)
-
-    useEffect(() => {
-        if (isNew && password !== confirmPassword) {
-            setMessage('Password mismatch')
-        } else {
-            if (password.length < 8 && password.length > 0) {
-                setMessage('Password lent should atleast 8 in length')
-            }
-            else {  
-                setMessage('');
-            }
-        }
-
-    }, [confirmPassword, password])
-
-
-    const handleSubmit = () => {
-        if (step === 0) {
-            if (email === '') {
-                toast.error('Please enter email first')
-                return
-
-            }
-            postApi('/checkuser', {
-                "email": email,
-            }).then(res => {
-                if (res.status >= 200 && res.status < 300) {
-                    setIsnew(res?.data?.isNew)
-                    setStep(1)
-                }
-            }).catch(err => {
-                toast.error("Email not found");
-            });
-        } else {
-
-            if (password.length < 8) {
-                setMessage('please enter password');
-                return
-            }
-
-            postApi('/login', {
-                "email": email,
-                "password": password
-            }).then(res => {
-                if (res.status >= 200 && res.status < 300) {
-                    localStorage.setItem('token', res.data.token);
-                    navigate(res.data.role === 'admin' ? '/admin-page' : '/user-page');
-                }
-            }).catch(err => {
-                toast.error("Please check your credential");
-            });
-
-        }
-
-
-    }
 
     return (
-        <div className=' flex flex-col justify-center items-center h-screen relative'>
-            <BackgroundGradientAnimation />
-            <section className=" w-fit h-fit items-center p-8 bg-white rounded-md absolute">
-                <div>
-                    <Typography variant="h3" color="blue-gray" className="mb-2">
-                        Sign In
-                    </Typography>
-                    <Typography className=" text-gray-600 font-normal text-[18px]">
-                        Enter your email and password to sign in
-                    </Typography>
-                    <form action="#" className="mx-auto max-w-[24rem] text-left">
-                        {step === 0 ?
-                            <div className="mb-6 mt-16">
-                                <label htmlFor="email">
-                                    <Typography
-                                        variant="small"
-                                        className="mb-2 block font-medium text-gray-900"
-                                    >
-                                        Your Email
-                                    </Typography>
-                                </label>
-                                <Input
-                                    variant="static"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    id="email"
-                                    color="gray"
-                                    size="lg"
-                                    type="email"
-                                    name="email"
-                                    placeholder="Enter your email"
-                                    className="w-full placeholder:opacity-100 focus:border-t-black border-t-blue-gray-200"
-                                // labelProps={{
-                                //     className: "hidden",
-                                // }}
-                                />
-                            </div>
-                            :
-                            <div className=' w-full '>
-                                <div className=' w-full my-5 py-2 rounded-2xl text-center broder border-gray-600 border-2 flex justify-center items-center space-x-2'>
-                                    <EnvelopeOpenIcon className=' h-4 w-4' />
-                                    <Typography className=" text-gray-600 font-bold text-sm">
-                                        {email}
-                                    </Typography>
-                                </div>
-
-                                <div className="mb-6">
-                                    <label htmlFor="password">
-                                        <Typography
-                                            variant="small"
-                                            className="mb-2 block font-medium text-gray-900"
-                                        >
-                                            Password
-                                        </Typography>
-                                    </label>
-                                    <Input
-                                        variant="static"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        size="lg"
-                                        placeholder="Enter password"
-                                        className="w-full placeholder:opacity-100 focus:border-t-black border-t-blue-gray-200"
-                                        type="password"
-                                    />
-                                </div>
-                                {
-                                    isNew && <div className="mb-6">
-                                        <label htmlFor="password">
-                                            <Typography
-                                                variant="small"
-                                                className="mb-2 block font-medium text-gray-900"
-                                            >
-                                                Confirm Password
-                                            </Typography>
-                                        </label>
-                                        <Input
-                                            variant="static"
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            size="lg"
-                                            placeholder="Enter confirm password"
-                                            className="w-full placeholder:opacity-100 focus:border-t-black border-t-blue-gray-200"
-                                            type="password"
-                                        />
-                                    </div>
-                                }
-                                {message !== '' &&
-                                    <Typography className=" text-red-600 font-normal text-sm">
-                                        {message}
-                                    </Typography>
-                                }
-
-
-                            </div>
-
-                        }
-
-
-
-
-                        <Button disabled={message !== ''} color="gray" size="lg" className="mt-6" fullWidth onClick={handleSubmit}>
-                            {step === 0 ? 'next' : (isNew ? 'Confirm' : 'Sign In')}
-                        </Button>
-
-
-                        <div className=' w-full px-20 py-5'>
-                            <Stepper
-                                activeStep={step}
+        <section className="grid text-center h-screen items-center p-8">
+            <div>
+                <Typography variant="h3" color="blue-gray" className="mb-2">
+                    Sign In
+                </Typography>
+                <Typography className="mb-16 text-gray-600 font-normal text-[18px]">
+                    Enter your email and password to sign in
+                </Typography>
+                <form action="#" className="mx-auto max-w-[24rem] text-left">
+                    <div className="mb-6">
+                        <label htmlFor="email">
+                            <Typography
+                                variant="small"
+                                className="mb-2 block font-medium text-gray-900"
                             >
-                                <Step className=' hover:bg-gray-600 cursor-pointer' onClick={() => setStep(0)}>1</Step>
-                                <Step className='hover:bg-gray-600 cursor-pointer'>2</Step>
-                            </Stepper>
-                        </div>
+                                Your Email
+                            </Typography>
+                        </label>
+                        <Input
+                            id="email"
+                            color="gray"
+                            size="lg"
+                            type="email"
+                            name="email"
+                            value={email}
+                            // onChange={}
+                            placeholder="name@mail.com"
+                            className="w-full placeholder:opacity-100 focus:border-t-black border-t-blue-gray-200"
+                            labelProps={{
+                                className: "hidden",
+                            }}
+                        />
+                    </div>
+                    <div className="mb-6">
+                        <label htmlFor="password">
+                            <Typography
+                                variant="small"
+                                className="mb-2 block font-medium text-gray-900"
+                            >
+                                Password
+                            </Typography>
+                        </label>
+                        <Input
+                            size="lg"
+                            placeholder="********"
+                            labelProps={{
+                                className: "hidden",
+                            }}
+                            className="w-full placeholder:opacity-100 focus:border-t-black border-t-blue-gray-200"
+                            type={passwordShown ? "text" : "password"}
+                            icon={
+                                <i onClick={togglePasswordVisiblity}>
+                                    {passwordShown ? (
+                                        <EyeIcon className="h-5 w-5" />
+                                    ) : (
+                                        <EyeSlashIcon className="h-5 w-5" />
+                                    )}
+                                </i>
+                            }
+                        />
+                    </div>
 
-                    </form>
-                </div>
-            </section>
-        </div>
+                    <div onClick={() => navigate('/resume')} className="w-full mx-auto px-4 bg-[#212121] md:w-full overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-lg cursor-pointer">
+                        <div className='md:w-full bg-green-500 absolute h-12 z-20  inset-y-52 bg-opacity-0 group-hover:inset-0 group-hover:bg-opacity-100 duration-700 ease-in-out transition-all'></div>
+                        <div className=' absolute z-40 text-white'>Sign In</div>
+                    </div>
+
+                    <div className="!mt-4 flex justify-end">
+                        <Typography
+                            as="a"
+                            href="#"
+                            color="blue-gray"
+                            variant="small"
+                            className="font-medium"
+                        >
+                            Forgot password
+                        </Typography>
+                    </div>
+                    <Button
+                        variant="outlined"
+                        size="lg"
+                        className="mt-6 flex h-12 items-center justify-center gap-2"
+                        fullWidth
+                    >
+                        <img
+                            src={`https://www.material-tailwind.com/logos/logo-google.png`}
+                            alt="google"
+                            className="h-6 w-6"
+                        />{" "}
+                        sign in with google
+                    </Button>
+                    <Typography
+                        variant="small"
+                        color="gray"
+                        className="!mt-4 text-center font-normal"
+                    >
+                        Not registered?{" "}
+                        <a href="#" className="font-medium text-gray-900">
+                            Create account
+                        </a>
+                    </Typography>
+                </form>
+            </div >
+        </section >
 
     )
 }
