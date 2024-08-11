@@ -4,14 +4,11 @@ import App from './App.jsx'
 import './index.css'
 import { ThemeProvider } from '@material-tailwind/react'
 import { Toaster } from 'react-hot-toast'
-import { LoadingProvider } from './utils/LoadingContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider>
-      <LoadingProvider>
-        <App />
-      </LoadingProvider>
+      <App />
       <Toaster toastOptions={{
         style: {
           zIndex: 100000,

@@ -7,8 +7,8 @@ const generator = {
       return '';
     }
 
-    const { name, email, phone, location, website } = basics;
-    const address = location?.address || '';
+    const { name, email, phone, address, website, summary } = basics;
+
     const websiteLine = website ? `\\href{${website}}{${website}}` : '';
 
     let line1 = name ? `{\\Huge \\scshape {${name}}}` : '';
@@ -26,6 +26,13 @@ const generator = {
         ${line1}
         ${line2}
       \\end{center}
+      ${summary ? `
+        %==== Summary ====%
+        \\header{Summary}
+        \\vspace{1mm}
+        ${summary}
+        \\vspace{2mm}
+        ` : ''}
     `;
   },
 
@@ -338,6 +345,9 @@ function template1(values) {
         switch (section) {
           case 'profile':
             return generator.profileSection(values.basics);
+
+          case 'summary':
+            return generator.summarySection(values.summary);
 
           case 'education':
             return generator.educationSection(
