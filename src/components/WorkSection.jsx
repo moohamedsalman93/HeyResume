@@ -31,7 +31,7 @@ function WorkSection({ exampleData, setExampleData }) {
   //x is outer loop and y is inner loop 
   //x is exampleData.work[] loop and y is exampleData.work.highlights loop[]
 
-  const handleTextareaChange = (x,y) => (e) => {
+  const handleTextareaChange = (x, y) => (e) => {
     setExampleData(prevState => {
       const updatedWork = [...prevState.work];
       updatedWork[x].highlights[y] = e.target.value;
@@ -103,11 +103,7 @@ function WorkSection({ exampleData, setExampleData }) {
             </Typography>
 
             <div className=' w-fit flex gap-4 h-full'>
-              {noofContent == i + 1 &&
-                < Button variant="outlined" color='green' className=' h-7 items-center flex' onClick={handleAddEducation}>
-                  add
-                </Button>
-              }
+
 
               {noofContent != 1 &&
                 <Button onClick={() => handleRemoveEducation(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
@@ -161,7 +157,7 @@ function WorkSection({ exampleData, setExampleData }) {
             </Typography>
             {exampleData.work[i]?.highlights?.map((item, index) =>
               <div key={index} className=' flex items-center gap-2 w-full '>
-                <textarea value={item} onChange={ handleTextareaChange(i, index)} className=' p-1 text-sm !h-[3rem]  min-w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                <textarea value={item} onChange={handleTextareaChange(i, index)} className=' p-1 text-sm !h-[3rem]  min-w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
                 <div className=' flex gap-2'>
 
                   {exampleData.work[i]?.highlights.length !== 1 &&
@@ -176,6 +172,15 @@ function WorkSection({ exampleData, setExampleData }) {
 
             }
           </div>
+
+          <div className=' col-span-2 w-full flex justify-center items-center'>
+            {noofContent == i + 1 &&
+              < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddEducation}>
+                Add another
+              </Button>
+            }
+          </div>
+
         </div>
       ))
       }

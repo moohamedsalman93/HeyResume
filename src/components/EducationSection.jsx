@@ -11,7 +11,7 @@ function EducationSection({ exampleData, setExampleData }) {
     useEffect(() => {
         const presentStatus = exampleData.education.map(edu => edu.endDate === "present");
         setIsPresent(presentStatus);
-        setNoofContent(exampleData.education.length);
+        setNoofContent(exampleData?.education?.length);
     }, [exampleData]);
 
 
@@ -31,7 +31,6 @@ function EducationSection({ exampleData, setExampleData }) {
             ...prevState,
             education: [...prevState.education, { institution: '', studyType: '', area: '', score: '', startDate: '', endDate: '' }]
         }));
-        setNoofContent(noofContent + 1);
     };
 
     const handleRemoveEducation = (index) => {
@@ -54,7 +53,27 @@ function EducationSection({ exampleData, setExampleData }) {
         <div className=' w-full h-full p-6 flex flex-col gap-4'>
 
             {Array(noofContent).fill().map((_, i) => (
-                <div key={i} className={`flex flex-col gap-10  p-4 border-b-2  border-green-100 py-4`}>
+                <div key={i} className={`grid grid-cols-2 gap-10  p-4 border rounded-md place-items-center  py-4 bg-white shadow-md relative w-full`}>
+
+                    <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
+                        <Typography
+                            variant="h6"
+                            className='text-blue-gray-700'
+                        >
+                            Education {i + 1}
+                        </Typography>
+
+                        <div className=' w-fit flex gap-4 h-full'>
+
+                            {noofContent != 1 &&
+                                <Button onClick={() => handleRemoveEducation(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
+                                    remove
+                                </Button>
+                            }
+                        </div>
+
+                    </div>
+
                     <Input
                         variant="static"
                         label="Institute"
@@ -84,7 +103,7 @@ function EducationSection({ exampleData, setExampleData }) {
                         onChange={handleInputChange('score', i)}
                     />
 
-                    <div className='  flex justify-between'>
+                    <div className='  flex justify-between col-span-2 w-full'>
                         <DatePicker isDisable={false} key={1} title={"Start Date"} date={exampleData.education[i]?.startDate || 'Jan-2014'} handleInputChange={handleInputChange} field={"startDate"} index={i} />
                         <div >
                             <DatePicker key={2} isDisable={isPresent[i]} title={"End Date"} date={exampleData.education[i]?.endDate || 'Jan-2014'} handleInputChange={handleInputChange} field={"endDate"} index={i} />
@@ -97,20 +116,14 @@ function EducationSection({ exampleData, setExampleData }) {
                         </div>
                     </div>
 
-
-                    <div className=' w-full flex gap-4'>
+                    <div className=' col-span-2 w-full flex justify-center items-center'>
                         {noofContent == i + 1 &&
-                            < Button variant="outlined" color='green' onClick={handleAddEducation}>
-                                add
-                            </Button>
-                        }
-
-                        {noofContent != 1 &&
-                            <Button onClick={() => handleRemoveEducation(i)} variant="outlined" color='red'>
-                                remove
+                            < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddEducation}>
+                                Add another
                             </Button>
                         }
                     </div>
+
                 </div>
             ))
             }

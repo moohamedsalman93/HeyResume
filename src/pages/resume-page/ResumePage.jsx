@@ -211,9 +211,9 @@ function ResumePage() {
                         {selectedPage === "Profile" && <ProfileSection exampleData={exampleData} setExampleData={setExampleData} />}
                         {selectedPage === "Education" && <EducationSection exampleData={exampleData} setExampleData={setExampleData} />}
                         {selectedPage === "Work" && <WorkSection exampleData={exampleData} setExampleData={setExampleData} />}
-                        {selectedPage === "Skills" && <SkillsSection />}
-                        {selectedPage === "Projects" && <ProjectSection />}
-                        {selectedPage === "Awards" && <AwardSection />}
+                        {selectedPage === "Skills" && <SkillsSection exampleData={exampleData} setExampleData={setExampleData} />}
+                        {selectedPage === "Projects" && <ProjectSection exampleData={exampleData} setExampleData={setExampleData} />}
+                        {selectedPage === "Awards" && <AwardSection exampleData={exampleData} setExampleData={setExampleData}  />}
 
                     </div>
                 </div>
