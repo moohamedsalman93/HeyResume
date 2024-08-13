@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import getTemplateData from '../../lib/getTemplateData';
 import latex from '../../lib/latext';
 import { pdfjs, Document, Page } from 'react-pdf'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowsPointingInIcon, DocumentTextIcon, PencilIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, ArrowRightIcon, ArrowsPointingInIcon, DocumentTextIcon, MinusIcon, PencilIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { ArrowsPointingOutIcon } from '@heroicons/react/24/solid';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ProfileSection from '../../components/ProfileSection';
@@ -30,83 +30,33 @@ function ResumePage() {
     const [contentPages, setContentPages] = useState([
         "Templates",
         "Profile",
-        "Eductaion",
+        "Education",
         "Work",
         "Skills",
         "Projects",
         "Awards",
     ])
-    const [exampleData, setExampleData] = useState({
-        selectedTemplate: 1,
-        basics: {
-            name: "mohamed salman",
-            email: "moohamedsalman93@gmail.com",
-            phone: "9843594178",
-            address: "28/5, junnath miyan street, parangipettai-608502",
-            website: "moohamedsalman93.github.com/portfolio",
-            summary: "Experienced software developer with a strong background in building scalable web applications. hgshdfhgshgafhgahsdgfjgasd idhasjfh dasjihfjhasji uiashdfjih dsifhjihsadji sdahfjiadshfi dsaifhjiadhsfji jisadhfiadhsf asdifhuisahdf sdiufhsauihdfi sadifhsduiahf sadijfiojogd ighidihiet8usdf ge9itgi9tjefdnh8g rutiejdgkdi9u ",
-        },
-        education: [
-            {
-                institution: "University of Example",
-                location: "Example City",
-                studyType: "Bachelor's",
-                area: "Computer Science",
-                score: "3.8",
-                startDate: "2015",
-                endDate: "2019"
-            }
-        ],
-        work: [
-            {
-                name: "Example Corp",
-                position: "Software Engineer",
-                location: "Example City",
-                startDate: "2019",
-                endDate: "Present",
-                highlights: ["Developed web applications", "Led a team of 5 engineers"]
-            }
-        ],
-        skills: [
-            {
-                name: "Programming Languages",
-                keywords: ["JavaScript", "Python", "Java"]
-            },
-            {
-                name: "Frameworks",
-                keywords: ["React", "Node.js", "Django"]
-            }
-        ],
-        projects: [
-            {
-                name: "Project Alpha",
-                description: "A web application for managing tasks.",
-                keywords: ["React", "Node.js"],
-                url: "https://github.com/johndoe/project-alpha"
-            }
-        ],
-        awards: [
-            {
-                title: "Best Developer Award",
-                summary: "Awarded for outstanding performance in software development.",
-                date: "2020",
-                awarder: "Example Corp"
-            }
-        ],
-        headings: {
-            education: "Education",
-            work: "Experience",
-            skills: "Skills",
-            projects: "Projects",
-            awards: "Awards"
-        },
-        sections: ["profile", "education", "work", "skills", "projects", "awards"]
-    })
+
+    const [exampleData, setExampleData] = useState()
+
     const [scale, setScale] = useState(1.0)
     const [openImage, setOpenImage] = useState('');
     const [imagePosition, setImagePosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
     const controls = useAnimation();
 
+
+    useEffect(() => {
+        if (exampleData) {
+            localStorage.setItem('Data', JSON.stringify(exampleData));
+        }
+    }, [exampleData])
+
+    useEffect(() => {
+        const storedData = localStorage.getItem('Data');
+        if (storedData) {
+            setExampleData(JSON.parse(storedData));
+        }
+    }, [])
 
     const handleImageClick = (imageUrl, event) => {
         const imgRect = event.target.getBoundingClientRect();
@@ -240,8 +190,8 @@ function ResumePage() {
                     </div>
                 </div>
 
-                <div className=' w-[35%] h-full bg-white '>
-                    <div className=' h-14 w-full border-b flex items-center justify-between px-4'>
+                <div className=' w-[45%] h-full bg-white '>
+                    <div className=' h-[7.5%] w-full border-b flex items-center justify-between px-4'>
                         <Typography
                             variant="h6"
                             className='text-blue-gray-700'
@@ -255,12 +205,12 @@ function ResumePage() {
                             </IconButton>
                         </div>
                     </div>
-                    <div className='h-full w-full overflow-y-auto p-2 bg-white'>
+                    <div className='h-[92.5%] w-full overflow-y-auto p-2 bg-white'>
 
                         {selectedPage === "Templates" && <TemplateSection exampleData={exampleData} setExampleData={setExampleData} handleImageClick={handleImageClick} />}
                         {selectedPage === "Profile" && <ProfileSection exampleData={exampleData} setExampleData={setExampleData} />}
-                        {selectedPage === "Education" && <EducationSection />}
-                        {selectedPage === "Work" && <WorkSection />}
+                        {selectedPage === "Education" && <EducationSection exampleData={exampleData} setExampleData={setExampleData} />}
+                        {selectedPage === "Work" && <WorkSection exampleData={exampleData} setExampleData={setExampleData} />}
                         {selectedPage === "Skills" && <SkillsSection />}
                         {selectedPage === "Projects" && <ProjectSection />}
                         {selectedPage === "Awards" && <AwardSection />}
@@ -269,7 +219,7 @@ function ResumePage() {
                 </div>
 
 
-                <div className=' w-[50%] h-full  overflow-hidden mx-4 bg-white flex flex-col justify-start items-center space-y-2'>
+                <div className=' w-[40%] h-full  overflow-hidden mx-4 bg-white flex flex-col justify-start items-center space-y-2'>
                     <div className='h-14 w-full flex  justify-between pr-4 items-center border-b py-3'>
                         <div className=' flex flex-col space-y-1 pl-2'>
                             {
@@ -297,35 +247,56 @@ function ResumePage() {
                                 className='text-blue-gray-700 pl-1 max-w-full overflow-hidden text-ellipsis items-center '
                                 variant='small'
                             >
-                                Template : {exampleData.selectedTemplate}
+                                Template : {exampleData?.selectedTemplate}
                             </Typography>
                         </div>
 
+                        <div className=' flex space-x-4 '>
 
-                        <IconButton disabled={!pdfUrl} onClick={handleDownload}>
-                            <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4 text-white transition-all duration-500 " />
-                        </IconButton>
+                            <Tooltip content="Zoom out">
+                                <IconButton color='white' onClick={zoomOut}>
+                                    <MinusIcon className='w-6 h-6 cursor-pointer text-blue-gray-700' />
+                                </IconButton>
+                            </Tooltip>
+
+                            <Tooltip content="Zoom in">
+                                <IconButton color='white' onClick={zoomIn}>
+                                    <PlusIcon stroke={2} className='w-6 h-6 cursor-pointer text-blue-gray-700' />
+                                </IconButton>
+                            </Tooltip>
+
+                            <div className=' w-6'></div>
+
+                            <IconButton disabled={!pdfUrl} onClick={handleDownload} >
+                                <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4  text-white transition-all duration-500 " />
+                            </IconButton>
+
+                        </div>
+
+
 
 
                     </div>
 
-                    <div className=' w-full h-full flex justify-start items-start overflow-auto relative'>
+                    <div className=' w-full h-full flex justify-center py-2 items-start overflow-auto relative'>
                         <Document file={pdfUrl || "/blank.pdf"} onLoadSuccess={onDocumentLoadSuccess} >
+                            <div className=' border shadow-md'>
+                                <Page
+                                    scale={scale}
+                                    pageNumber={pageNumber}
+                                    renderAnnotationLayer={false}
+                                    renderTextLayer={false}
+                                    loading=""
+                                />
+                            </div>
 
-                            <Page
-                                scale={scale}
-                                pageNumber={pageNumber}
-                                renderAnnotationLayer={false}
-                                renderTextLayer={false}
-                                loading=""
-
-                            />
 
                         </Document>
 
 
                     </div>
-                    <div className='h-12 w-full flex justify-between pr-4 items-center border-t p-2'>
+
+                    <div className='h-12 w-full flex justify-center pr-4 items-center border-t p-2'>
                         <div className="flex items-center gap-8">
                             <IconButton
                                 size="sm"
@@ -348,22 +319,9 @@ function ResumePage() {
                                 <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
                             </IconButton>
                         </div>
-                        <div className=' flex space-x-4'>
 
-                            <Tooltip content="Zoom out">
-                                <IconButton color='white' onClick={zoomOut}>
-                                    <ArrowsPointingOutIcon className='w-6 h-6 cursor-pointer text-blue-gray-700' />
-                                </IconButton>
-                            </Tooltip>
-
-                            <Tooltip content="Zoom in">
-                                <IconButton color='white' onClick={zoomIn}>
-                                    <ArrowsPointingInIcon className='w-6 h-6 cursor-pointer text-blue-gray-700' />
-                                </IconButton>
-                            </Tooltip>
-
-                        </div>
                     </div>
+
                 </div>
 
             </div>

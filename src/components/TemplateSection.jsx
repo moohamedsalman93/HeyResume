@@ -18,7 +18,6 @@ function TemplateSection({ exampleData, setExampleData, handleImageClick }) {
           <div onClick={()=>handleTemplateSelect(i + 1)} className={` w-fit px-3 py-1 ${exampleData?.selectedTemplate == i + 1 ? ' bg-green-100 ' : ' group-hover:shadow '} transition-all duration-500 text-blue-gray-600 rounded-lg`}>
             Template {i + 1}
           </div>
-
         </div>
       ))}
     </div>
