@@ -28,13 +28,16 @@ function WorkSection({ exampleData, setExampleData }) {
     });
   };
 
-  const handleTextareaChange = (field, index) => (e) => {
+  //x is outer loop and y is inner loop 
+  //x is exampleData.work[] loop and y is exampleData.work.highlights loop[]
+
+  const handleTextareaChange = (x,y) => (e) => {
     setExampleData(prevState => {
-      const updatedEducation = [...prevState.work];
-      updatedEducation[index][field] = e.target.value; // Update specific field
+      const updatedWork = [...prevState.work];
+      updatedWork[x].highlights[y] = e.target.value;
       return {
         ...prevState,
-        work: updatedEducation,
+        work: updatedWork,
       };
     });
   };
@@ -158,7 +161,7 @@ function WorkSection({ exampleData, setExampleData }) {
             </Typography>
             {exampleData.work[i]?.highlights?.map((item, index) =>
               <div key={index} className=' flex items-center gap-2 w-full '>
-                <textarea value={item} className=' p-1 text-sm !h-[3rem]  min-w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                <textarea value={item} onChange={ handleTextareaChange(i, index)} className=' p-1 text-sm !h-[3rem]  min-w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
                 <div className=' flex gap-2'>
 
                   {exampleData.work[i]?.highlights.length !== 1 &&
