@@ -138,7 +138,7 @@ function WorkSection({ exampleData, setExampleData }) {
           />
 
 
-          <div className='  flex justify-evenly col-span-2'>
+          <div className='  flex justify-between col-span-2'>
             <DatePicker isDisable={false} key={1} title={"Start Date"} date={exampleData.work[i]?.startDate || 'Jan-2014'} handleInputChange={handleInputChange} field={"startDate"} index={i} />
             <div >
               <DatePicker key={2} isDisable={isPresent[i]} title={"End Date"} date={exampleData.work[i]?.endDate || 'Jan-2014'} handleInputChange={handleInputChange} field={"endDate"} index={i} />
@@ -151,13 +151,13 @@ function WorkSection({ exampleData, setExampleData }) {
             </div>
           </div>
 
-          <div className=' mb-4 flex flex-col gap-4 col-span-2 w-[20rem]'>
+          <div className=' mb-4 flex flex-col gap-4 col-span-2 w-[30rem]'>
             <Typography className=" text-[#a2a2a2] text-sm font-normal">
               Highlights
             </Typography>
             {exampleData.work[i]?.highlights?.map((item, index) =>
               <div key={index} className=' flex items-center gap-2 w-full '>
-                <textarea value={item} onChange={handleTextareaChange(i, index)} className=' p-1 text-sm !h-[3rem]  min-w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                <textarea value={item} onChange={handleTextareaChange(i, index)} className=' p-1 text-sm min-h-[4rem] overflow-hidden  min-w-[29rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
                 <div className=' flex gap-2'>
 
                   {exampleData.work[i]?.highlights.length !== 1 &&

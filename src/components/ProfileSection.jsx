@@ -52,7 +52,7 @@ function ProfileSection({ exampleData, setExampleData }) {
         value={exampleData.basics.website}
         onChange={handleInputChange('website')}
       />
-      <Textarea
+      <textarea
         variant="static"
         label="Summary"
         placeholder="Write the summary here"

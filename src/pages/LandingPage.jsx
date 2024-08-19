@@ -148,9 +148,9 @@ function LandingPage() {
                     </ul>
                     <div className="hidden items-center gap-4 lg:flex">
 
-                        <div onClick={()=>navigate('/login')} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-lg cursor-pointer">
-                            <div className='md:w-[6rem] bg-green-500 absolute h-12 z-20 rounded-lg inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
-                            <div className=' absolute z-40 text-white'>Sign In</div>
+                        <div onClick={() => navigate('/login')} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
+                            <div className='md:w-[6rem] bg-green-500 absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' absolute z-40 text-green-500 duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-2xl w-[5.7rem]'>Sign In</div>
                         </div>
                     </div>
                     <IconButton
@@ -212,11 +212,15 @@ function LandingPage() {
                     <div className="mt-8  w-full place-items-start md:justify-center">
 
 
+                        <div onClick={() => navigate('/login')} className="w-full mx-auto px-4  md:w-[12rem] overflow-clip border h-10 group relative flex flex-col justify-center items-center rounded-[0.6rem] hover:shadow-none shadow-md shadow-green-100 cursor-pointer">
+                            <div className='md:w-[12rem] bg-green-500 absolute h-12 z-20 rounded-[0.6rem] inset-y-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' absolute z-40 text-green-500 font-semibold duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-[0.5rem] w-[11.7rem]'>Build My Resume</div>
+                        </div>
 
-                        <div className="w-full mx-auto bg-green-500 px-4 md:w-[12rem] overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-md cursor-pointer">
+                        {/* <div className="w-full mx-auto bg-green-500 px-4 md:w-[12rem] overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-md cursor-pointer">
                             <div className='md:w-[12rem] bg-[#212121] absolute h-12 z-20 rounded-md inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
                             <div className=' absolute z-40 text-white'>Build My Resume</div>
-                        </div>
+                        </div> */}
 
 
                         <Typography

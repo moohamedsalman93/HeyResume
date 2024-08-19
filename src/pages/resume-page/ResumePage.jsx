@@ -1,10 +1,19 @@
-import { IconButton, Navbar, Tooltip, Typography } from '@material-tailwind/react'
+import {
+    IconButton, Navbar, Tooltip, Typography, Dialog,
+    DialogHeader,
+    DialogBody,
+    DialogFooter,
+    Button,
+    Popover,
+    PopoverHandler,
+    PopoverContent,
+    Progress,
+} from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
 import getTemplateData from '../../lib/getTemplateData';
 import latex from '../../lib/latext';
 import { pdfjs, Document, Page } from 'react-pdf'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowsPointingInIcon, DocumentTextIcon, MinusIcon, PencilIcon, PlusIcon } from '@heroicons/react/24/solid';
-import { ArrowsPointingOutIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, ChevronRightIcon, ClockIcon, DocumentTextIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, ShareIcon, ShoppingBagIcon } from '@heroicons/react/24/solid';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ProfileSection from '../../components/ProfileSection';
 import TemplateSection from '../../components/TemplateSection'
@@ -14,6 +23,8 @@ import SkillsSection from '../../components/SkillsSection'
 import ProjectSection from '../../components/ProjectSection'
 import AwardSection from '../../components/AwardSection'
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+
 
 
 const workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
@@ -39,9 +50,106 @@ function ResumePage() {
 
     const [exampleData, setExampleData] = useState()
 
-    const [scale, setScale] = useState(1.0)
+    const [scale, setScale] = useState(0.8)
     const [openImage, setOpenImage] = useState('');
     const [imagePosition, setImagePosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
+    const [open, setOpen] = useState(false);
+    const [historyData, setHistoryData] = useState([{
+        name: "salman's", date: "Jan 23, 2024", data:
+        {
+            "selectedTemplate": 1,
+            "basics": {
+                "name": "basith",
+                "email": "moohamedsalman93@gmail.com",
+                "phone": "9843594178",
+                "address": "28/5, junnath miyan street, parangipettai-608502",
+                "website": "moohamedsalman93.github.com/portfolio",
+                "summary": "Experienced software developer with a strong background in building scalable web applications. hgshdfhgshgafhgahsdgfjgasd idhasjfh dasjihfjhasji uiashdfjih dsifhjihsadji sdahfjiadshfi dsaifhjiadhsfji jisadhfiadhsf asdifhuisahdf sdiufhsauihdfi sadifhsduiahf sadijfiojogd ighidihiet8usdf ge9itgi9tjefdnh8g rutiejdgkdi9u "
+            },
+            "education": [{
+                "institution": "Jamal Mohamed College",
+                "studyType": "B.sc",
+                "area": "Computer Science",
+                "score": "6.8",
+                "startDate": "Jun-2019",
+                "endDate": "Apr-2022"
+            },
+            {
+                "institution": "",
+                "studyType": "",
+                "area": "",
+                "score": "",
+                "startDate": "Jan-2014",
+                "endDate": "Jan-2014"
+            }],
+            "work": [{
+                "name": "Vsolver",
+                "position": "Frontend Developer",
+                "location": "Trichy",
+                "startDate": "Feb-2023",
+                "endDate": "Sep-2023",
+                "highlights": ["Collabrated to manage the both frontend and backend",
+                    "the tech stack is used in project is reactjs,tailwindcss"]
+            },
+            {
+                "name": "Easy Out Desk",
+                "position": "Database Administrative",
+                "location": "Pondicherry",
+                "startDate": "Jul-2024",
+                "endDate": "Jan-2024",
+                "highlights": ["Gained the knowledge of  Database"]
+            }],
+            "skills": [{
+                "name": "Programming Languages",
+                "keywords": ["JavaScript",
+                    "Python",
+                    "Java"]
+            },
+            {
+                "name": "Frameworks",
+                "keywords": ["React",
+                    "Node.js",
+                    "Django"]
+            },
+            {
+                "name": "",
+                "keywords": [""]
+            }],
+            "projects": [{
+                "name": "ahsdha",
+                "url": "ghasgdhgas",
+                "description": "jasjdhj",
+                "keywords": ["reactjs"]
+            }],
+            "awards": [{
+                "title": "Best Developer Award",
+                "summary": "Awarded for outstanding performance in software development.",
+                "date": "Jan-2023",
+                "awarder": "Example Corp"
+            },
+            {
+                "title": "",
+                "awarder": "",
+                "date": "Jan-2024",
+                "summary": ""
+            }],
+            "headings": {
+                "education": "Education",
+                "work": "Experience",
+                "skills": "Skills",
+                "projects": "Projects",
+                "awards": "Awards"
+            },
+            "sections": ["profile",
+                "education",
+                "work",
+                "skills",
+                "projects",
+                "awards"]
+        }
+    }])
+
+    const handleOpen = () => setOpen(!open);
     const controls = useAnimation();
 
 
@@ -89,9 +197,29 @@ function ResumePage() {
         setPdfUrl(pdfUrl);
     };
 
+    const handleEdit = (index) => {
+        localStorage.setItem('Data', JSON.stringify(historyData[index]?.data));
+    }
+
+    const generateAndDownload = async (index) => {
+        const { texDoc, opts } = getTemplateData(historyData[index]?.data);
+        const pdfUrl = await latex(texDoc, opts);
+        if (pdfUrl) {
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.setAttribute('download', historyData[index]?.name + '.pdf'); // You can specify the filename here
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } else {
+            console.log('No PDF URL available');
+        }
+    }
+
 
     const zoomIn = () => {
-        setScale(prevScale => Math.min(prevScale + 0.1, 3)); // Increase scale, max 3x zoom
+        setScale(prevScale => Math.min(prevScale + 0.1, 3)); // Increase scale, max 3x 
+        console.log(scale)
     };
 
     const zoomOut = () => {
@@ -128,6 +256,21 @@ function ResumePage() {
         setOpenImage('');
     };
 
+    const hanldeFarward = () => {
+        const getIndex = contentPages.indexOf(selectedPage)
+        if (getIndex < contentPages.length -1 ) {
+            setSelectedPage(contentPages[getIndex + 1])
+        }
+    }
+
+    const hanldeBack = () => {
+        const getIndex = contentPages.indexOf(selectedPage)
+        if (getIndex > 0) {
+            setSelectedPage(contentPages[getIndex - 1])
+            generatePDF()
+        }
+    }
+
 
     return (
         <div className=' w-full h-full overflow-hidden relative flex flex-col justify-start items-start'>
@@ -150,12 +293,28 @@ function ResumePage() {
                         </div>
                     </div>
 
-                    <div className="hidden items-center gap-4 lg:flex">
-                        <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full'>
 
-                        </div>
+                    <Popover placement="bottom-end">
+                        <PopoverHandler>
+                            <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full'>
 
-                    </div>
+                            </div>
+                        </PopoverHandler>
+                        <PopoverContent className="w-[12rem] divide-y-2 flex flex-col pl-10">
+                            <div className=' h-10 flex  items-center w-[5.5rem] justify-between hover:text-blue-gray-900 cursor-pointer transition-colors duration-700'>
+                                <Typography >
+                                    Order
+                                </Typography>
+                                <ShoppingBagIcon className=' h-4 w-4' />
+                            </div>
+                            <div className=' h-10 flex  items-center w-[5.5rem] justify-between hover:text-blue-gray-900 cursor-pointer  transition-colors duration-700'>
+                                <Typography >
+                                    Log out
+                                </Typography>
+                                <ArrowRightStartOnRectangleIcon className=' h-4 w-4' />
+                            </div>
+                        </PopoverContent>
+                    </Popover>
 
                 </div>
 
@@ -184,28 +343,33 @@ function ResumePage() {
 
                         }
 
-                        <div>
+                        <div onClick={handleOpen} className=' cursor-pointer group mt-12 w-full h-11 bg-[#212121] rounded-xl flex items-center gap-2 hover:shadow-md hover:shadow-green-200 duration-500 transition-all'>
+                            <Typography
 
+                                variant="paragraph"
+                                color='white'
+                                className={` ml-8 flex items-center font-medium l`}
+                            >
+                                History
+                            </Typography>
+                            <ClockIcon className=' h-6 w-6 text-white group-hover:animate-spin duration-700' />
                         </div>
+
                     </div>
+
                 </div>
 
                 <div className=' w-[45%] h-full bg-white '>
-                    <div className=' h-[7.5%] w-full border-b flex items-center justify-between px-4'>
-                        <Typography
-                            variant="h6"
-                            className='text-blue-gray-700'
-                        >
-                            {selectedPage} section
-                        </Typography>
 
-                        <div className=' flex items-center gap-6'>
-                            <IconButton onClick={generatePDF}>
-                                <DocumentTextIcon strokeWidth={2} className="h-4 w-4 text-white transition-all duration-500 " />
-                            </IconButton>
+                    <div className='h-[92.5%] w-full overflow-y-auto p-2 bg-white shadow-inner'>
+                        <div className=' h-[7.5%] w-full border-b-2 flex items-center justify-between px-4'>
+                            <Typography
+                                variant="h6"
+                                className='text-blue-gray-700'
+                            >
+                                {selectedPage} section
+                            </Typography>
                         </div>
-                    </div>
-                    <div className='h-[92.5%] w-full overflow-y-auto p-2 bg-white'>
 
                         {selectedPage === "Templates" && <TemplateSection exampleData={exampleData} setExampleData={setExampleData} handleImageClick={handleImageClick} />}
                         {selectedPage === "Profile" && <ProfileSection exampleData={exampleData} setExampleData={setExampleData} />}
@@ -213,8 +377,32 @@ function ResumePage() {
                         {selectedPage === "Work" && <WorkSection exampleData={exampleData} setExampleData={setExampleData} />}
                         {selectedPage === "Skills" && <SkillsSection exampleData={exampleData} setExampleData={setExampleData} />}
                         {selectedPage === "Projects" && <ProjectSection exampleData={exampleData} setExampleData={setExampleData} />}
-                        {selectedPage === "Awards" && <AwardSection exampleData={exampleData} setExampleData={setExampleData}  />}
+                        {selectedPage === "Awards" && <AwardSection exampleData={exampleData} setExampleData={setExampleData} />}
 
+                    </div>
+                    <div className=' h-[7.5%] w-full border-t-2 flex gap-4 items-center justify-between px-4'>
+
+                        <div className=' gap-4 flex items-end select-none'>
+                            <ChevronLeftIcon onClick={hanldeBack} className=' cursor-pointer hover:border h-8 w-8 hover:shadow-xl rounded-md' />
+                            <div className="w-[17rem]">
+                                <div className="mb-2 flex items-center justify-center gap-4">
+                                    <Typography color="blue-gray" variant="h6">
+                                        Completed
+                                    </Typography>
+                                </div>
+                                <Progress value={contentPages.indexOf(selectedPage) / (contentPages.length - 1) * 100} />
+                            </div>
+                            <ChevronRightIcon onClick={hanldeFarward} className=' cursor-pointer hover:border h-8 w-8 hover:shadow-xl rounded-md' />
+                        </div>
+
+
+                        <div className=' flex items-center gap-6'>
+                            <Tooltip content="Save">
+                                <Button onClick={generatePDF}>
+                                    <DocumentTextIcon strokeWidth={2} className="h-4 w-4 text-white transition-all duration-500 " />
+                                </Button>
+                            </Tooltip>
+                        </div>
                     </div>
                 </div>
 
@@ -324,6 +512,56 @@ function ResumePage() {
 
                 </div>
 
+                <Dialog size='lg' open={open} handler={handleOpen}>
+                    <DialogHeader>
+
+                        <Typography variant='h6' className=' text-[#344767] '>
+                            Hsitory
+                        </Typography>
+                    </DialogHeader>
+                    <DialogBody>
+                        <div className=' h-[30rem] px-5 flex flex-col items-center'>
+                            <div className=' h-12 grid grid-cols-3 w-full border-b place-content-center px-10  '>
+                                <Typography className=' text-sm text-[#acb6c7] '>
+                                    Name
+                                </Typography>
+                                <Typography className=' text-sm text-[#acb6c7] '>
+                                    Created                                </Typography>
+                                <Typography className=' text-sm text-[#acb6c7] '>
+                                    Actions
+
+                                </Typography>
+                            </div>
+                            <div className=' h-full  w-full pt-2 divide-y-0'>
+                                {historyData.map((item, index) =>
+                                    <div key={index} className=' h-14 grid grid-cols-3 w-full place-content-center px-10 '>
+                                        <Typography className=' text-sm text-[#344767] '>
+                                            {item?.name}
+                                        </Typography>
+                                        <Typography className=' text-sm text-[#344767] '>
+                                            {item.date}
+                                        </Typography>
+                                        <div className=' gap-4 flex text-[#4caf50]'>
+                                            <ArrowDownTrayIcon onClick={() => generateAndDownload(index)} className=' w-6 h-6 cursor-pointer hover:text-green-200' />
+                                            <PencilSquareIcon onClick={() => handleEdit(index)} className=' w-6 h-6 cursor-pointer hover:text-green-200' />
+
+                                        </div>
+                                    </div>
+                                )
+
+                                }
+                            </div>
+
+                        </div>
+                    </DialogBody>
+                    <DialogFooter>
+
+                        <Button variant="gradient" color="green" onClick={handleOpen}>
+                            <span>Close</span>
+                        </Button>
+                    </DialogFooter>
+                </Dialog>
+
             </div>
 
             <AnimatePresence>
@@ -332,7 +570,7 @@ function ResumePage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="w-full h-screen  absolute z-50 flex flex-col justify-center items-center bg-opacity-45 bg-black"
+                        className="w-full h-full  absolute z-50 flex flex-col justify-center items-center bg-opacity-45 bg-black"
                         onClick={closeImage}
                     >
                         <motion.div
@@ -351,13 +589,13 @@ function ResumePage() {
                                 y: '-50%'
                             }}
 
-                            className="  flex justify-center items-center relative overflow-hidden"
+                            className="  flex justify-center items-center relative overflow-hidden py-4 h-full"
                             style={{ position: 'absolute' }}
                         >
-                            <motion.img initial={{ borderRadius: 999 }} whileInView={{ borderRadius: 10 }} src={openImage} alt="Selected" className="w-full  h-full object-cover" />
+                            <motion.img initial={{ borderRadius: 999 }} whileInView={{ borderRadius: 10 }} src={openImage} alt="Selected" className="w-full  h-[90%] object-cover" />
                             <button
                                 onClick={closeImage}
-                                className="absolute top-2 right-2 text-white bg-black/50 rounded-full p-1"
+                                className="absolute top-[7%] right-2 text-white bg-black/50 rounded-full p-1"
                             >
                                 ✕
                             </button>

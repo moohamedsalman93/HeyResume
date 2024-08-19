@@ -51,7 +51,6 @@ function EducationSection({ exampleData, setExampleData }) {
 
     return (
         <div className=' w-full h-full p-6 flex flex-col gap-4'>
-
             {Array(noofContent).fill().map((_, i) => (
                 <div key={i} className={`grid grid-cols-2 gap-10  p-4 border rounded-md place-items-center  py-4 bg-white shadow-md relative w-full`}>
 

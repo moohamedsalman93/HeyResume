@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Input, Typography } from '@material-tailwind/react'
 import DatePicker from './DatePicker';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 
 
@@ -63,9 +64,10 @@ function AwardSection({ exampleData, setExampleData }) {
 
 
               {noofContent != 1 &&
-                <Button onClick={() => handleRemoveAward(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
-                  remove
-                </Button>
+                // <Button onClick={() => handleRemoveAward(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
+                //   remove
+                // </Button>
+                <TrashIcon onClick={() => handleRemoveAward(i)} className=' w-6 h-6 text-red-200 cursor-pointer hover:text-red-500 transition-colors duration-700'/>
               }
             </div>
 
@@ -97,7 +99,7 @@ function AwardSection({ exampleData, setExampleData }) {
               </Typography>
 
               <div className=' flex items-center gap-2 w-full '>
-                <textarea placeholder="Resume maker is an web application , which helps to create ATS resume " value={exampleData.awards[i]?.summary} onChange={handleInputChange('summary', i)} className=' p-1 text-sm     w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                <textarea placeholder="Resume maker is an web application , which helps to create ATS resume " value={exampleData.awards[i]?.summary} onChange={handleInputChange('summary', i)} className=' p-1 text-sm  min-h-[7rem]    w-[25rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
 
               </div>
             </div>

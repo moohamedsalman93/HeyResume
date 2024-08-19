@@ -119,8 +119,17 @@ function SkillsSection({ exampleData, setExampleData }) {
             </Typography>
             {exampleData.skills[i]?.keywords?.map((item, index) =>
               <div key={index} className=' flex items-center gap-2 w-full '>
-                <textarea value={item} onChange={handleTextareaChange(i, index)} className=' p-1 text-sm !h-[3rem]  min-w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
-                <div className=' flex gap-2'>
+                <div className=''>
+                  <Input
+                    variant="static"
+
+                    placeholder="Reactjs"
+                    value={item}
+                    onChange={handleTextareaChange(i, index)}
+                    className=' '
+                  />
+                </div>
+                  <div className=' flex gap-2'>
 
                   {exampleData.skills[i]?.keywords.length !== 1 &&
                     <MinusIcon onClick={() => handleRemovekeywords(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-blue-gray-700 border hover:border-red-500 hover:text-red-500 rounded-full' />

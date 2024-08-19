@@ -132,7 +132,7 @@ function ProjectSection({ exampleData, setExampleData }) {
             </Typography>
 
             <div className=' flex items-center gap-2 w-full '>
-              <textarea placeholder="Resume maker is an web application , which helps to create ATS resume " value={exampleData.projects[i]?.description} onChange={handleInputChange('description', i)} className=' p-1 text-sm     w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+              <textarea placeholder="Resume maker is an web application , which helps to create ATS resume " value={exampleData.projects[i]?.description} onChange={handleInputChange('description', i)} className=' p-1 text-sm  min-h-[8rem]   w-full overflow-hidden transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
             </div>
           </div>
 
