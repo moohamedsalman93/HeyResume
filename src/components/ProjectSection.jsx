@@ -6,7 +6,7 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
 
 
 function ProjectSection({ exampleData, setExampleData }) {
-  const [noofContent, setNoofContent] = useState(1);
+  const [noofContent, setNoofContent] = useState(0);
   const [isPresent, setIsPresent] = useState([])
 
 
@@ -43,7 +43,7 @@ function ProjectSection({ exampleData, setExampleData }) {
   const handleAddProjects = () => {
     setExampleData(prevState => ({
       ...prevState,
-      projects: [...prevState.projects, { name: '', url: '', description: '',keywords: [""] }]
+      projects: [...prevState.projects, { name: '', url: '', description: '', keywords: [""] }]
     }));
   };
 
@@ -97,11 +97,11 @@ function ProjectSection({ exampleData, setExampleData }) {
             <div className=' w-fit flex gap-4 h-full'>
 
 
-              {noofContent != 1 &&
-                <Button onClick={() => handleRemoveProject(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
-                  remove
-                </Button>
-              }
+
+              <Button onClick={() => handleRemoveProject(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
+                remove
+              </Button>
+
             </div>
 
           </div>
@@ -177,6 +177,15 @@ function ProjectSection({ exampleData, setExampleData }) {
 
         </div>
       ))
+      }
+      {
+        <div className=' col-span-2 w-full flex justify-center items-center'>
+          {noofContent == 0 &&
+            < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddProjects}>
+              Add Project
+            </Button>
+          }
+        </div>
       }
     </div >
   )

@@ -24,25 +24,9 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import LandingPageImg from '../assets/landingPageImg.png'
+import { supabase } from '../lib/Auth/SupabseAuth';
 
 
-
-
-function NavItem({ children }) {
-    return (
-        <li>
-            <Typography
-                as="a"
-                href="#"
-                variant="paragraph"
-                color="blue-gray"
-                className="text-blue-gray-700 flex items-center gap-2 font-medium"
-            >
-                {children}
-            </Typography>
-        </li>
-    );
-}
 
 function LandingPage() {
     const [open, setOpen] = useState(false);
@@ -55,7 +39,35 @@ function LandingPage() {
         );
     }, [])
 
+
     const navigate = useNavigate();
+
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (user) {
+                navigate('/resume');
+            }
+        };
+        checkSession();
+    }, []);
+
+
+    //#region signin
+    async function signInWithGoogle() {
+        const { user, session, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+        });
+
+        if (error) {
+            console.error('Error signing in:', error.message);
+        } else {
+            console.log('Signed in as:', user);
+        }
+    }
+
+    //#endregion
 
     // useEffect(() => {
     //     const token = localStorage.getItem('token');
@@ -133,24 +145,24 @@ function LandingPage() {
         <div className=''>
             <Navbar shadow={false} fullWidth className="border-0">
                 <div className="container mx-auto flex items-center justify-between">
-                    <Typography color="blue-gray" className="text-lg font-bold">
-                        Hey Resume !
+                    <Typography color="blue-gray" className="text-2xl font-bold">
+                        <span className=' text-[#5e72e4]'>Hey </span>
+                        Resume !
                     </Typography>
-                    <ul className="ml-10 hidden items-center gap-6 lg:flex">
-                        <NavItem>
-                            <RectangleStackIcon className="h-5 w-5" />
-                            Pricing
-                        </NavItem>
-                        <NavItem>
-                            <UserCircleIcon className="h-5 w-5" />
-                            About Us
-                        </NavItem>
-                    </ul>
+
                     <div className="hidden items-center gap-4 lg:flex">
 
-                        <div onClick={() => navigate('/login')} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
-                            <div className='md:w-[6rem] bg-green-500 absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
-                            <div className=' absolute z-40 text-green-500 duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-2xl w-[5.7rem]'>Sign In</div>
+                        <div onClick={() => signInWithGoogle()} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
+                            <div className='md:w-[6rem] bg-[#5e72e4] absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' space-x-1 absolute z-40 font-semibold text-[#5e72e4] duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-2xl w-[5.7rem]'>
+                                <p>Sign in</p>
+
+                                <img
+                                    src={`https://www.material-tailwind.com/logos/logo-google.png`}
+                                    alt="google"
+                                    className="h-4 w-4"
+                                />
+                            </div>
                         </div>
                     </div>
                     <IconButton
@@ -168,17 +180,7 @@ function LandingPage() {
                 </div>
                 <Collapse open={open}>
                     <div className="container mx-auto mt-3 border-t border-blue-gray-50 px-2 pt-4">
-                        <ul className="flex flex-col gap-4">
-                            <NavItem>
-                                <RectangleStackIcon className="h-5 w-5" />
-                                Pricing
-                            </NavItem>
-                            <NavItem>
-                                <UserCircleIcon className="h-5 w-5" />
-                                About Us
-                            </NavItem>
 
-                        </ul>
                         <div className="mt-6 mb-4 flex items-center gap-4">
 
                             <Button color="gray">Sign in</Button>
@@ -198,7 +200,7 @@ function LandingPage() {
                         className="mx-auto my-6 w-full leading-snug  !text-2xl lg:max-w-3xl lg:!text-5xl"
                     >
                         Land your{" "}
-                        <span className="text-green-500 leading-snug ">
+                        <span className="text-[#5e72e4] leading-snug ">
                             dream job
                         </span>{" "}
                         interview.
@@ -212,12 +214,12 @@ function LandingPage() {
                     <div className="mt-8  w-full place-items-start md:justify-center">
 
 
-                        <div onClick={() => navigate('/login')} className="w-full mx-auto px-4  md:w-[12rem] overflow-clip border h-10 group relative flex flex-col justify-center items-center rounded-[0.6rem] hover:shadow-none shadow-md shadow-green-100 cursor-pointer">
-                            <div className='md:w-[12rem] bg-green-500 absolute h-12 z-20 rounded-[0.6rem] inset-y-52 group-hover:inset-0 duration-700 transition-all'></div>
-                            <div className=' absolute z-40 text-green-500 font-semibold duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-[0.5rem] w-[11.7rem]'>Build My Resume</div>
+                        <div onClick={() => signInWithGoogle()} className="w-full mx-auto px-4  md:w-[12rem] overflow-clip border h-10 group relative flex flex-col justify-center items-center rounded-[0.6rem] hover:shadow-none shadow-md shadow-[#5e72e482] cursor-pointer">
+                            <div className='md:w-[12rem] bg-[#5e72e4] absolute h-12 z-20 rounded-[0.6rem] inset-y-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' absolute z-40 text-[#5e72e4] font-semibold duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-[0.5rem] w-[11.7rem]'>Build My Resume</div>
                         </div>
 
-                        {/* <div className="w-full mx-auto bg-green-500 px-4 md:w-[12rem] overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-md cursor-pointer">
+                        {/* <div className="w-full mx-auto bg-[#5e72e4] px-4 md:w-[12rem] overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-md cursor-pointer">
                             <div className='md:w-[12rem] bg-[#212121] absolute h-12 z-20 rounded-md inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
                             <div className=' absolute z-40 text-white'>Build My Resume</div>
                         </div> */}
@@ -240,7 +242,7 @@ function LandingPage() {
                         </Typography>
                         <Typography
                             className="mt-3 mb-14 text-base font-medium text-gray-500"
-                            variant="leading"
+                            variant="lead"
                         >
                             {'Build a resume that passes the ATS (Applicant Tracking System) while impressing both the recruiters and hiring managers.'}
                         </Typography>
@@ -259,7 +261,7 @@ function LandingPage() {
                     {cardData.map((item, index) =>
                         <Card key={index} className=' hover:shadow-green-500 hover:shadow-md hover:border-none transition-all duration-300 border-green-500 border shadow-none'>
                             <CardBody className="max-w-sm md:p-5 h-[20rem]">
-                                <HeartIcon className="w-14 h-14 text-gray-900" />
+                                {/* <HeartIcon className="w-14 h-14 text-gray-900" /> */}
                                 <Typography
                                     color="blue-gray"
                                     className="mb-4 !mt-4 "
@@ -282,8 +284,11 @@ function LandingPage() {
 
                 <div className="container mx-auto my-auto flex flex-row justify-evenly items-center">
 
-                    <div className=' w-[30rem] h-[30rem] '>
-                        <img src={LandingPageImg} alt="" />
+                    <div className=' w-[30rem] h-[30rem] relative overflow-clip flex justify-end items-end'>
+                        <img src={`https://latexresu.me/static/1.png`} alt="" className=' inset-x-2 absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
+                        <img src={`https://latexresu.me/static/2.png`} alt="" className=' inset-x-32 inset-y-16 absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
+                        <img src={`https://latexresu.me/static/3.png`} alt="" className=' inset-x-56 inset-y-4  absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
+
                     </div>
 
                     <div className="max-w-xl ">
@@ -307,7 +312,7 @@ function LandingPage() {
 
 
 
-                <div className="grid grid-cols-12 items-center lg:gap-x-10 gap-y-10 rounded-2xl bg-green-50 lg:p-12 p-6 h-[45rem] w-full">
+                <div className="grid grid-cols-12 items-center lg:gap-x-10 gap-y-10 rounded-2xl bg-[#5e72e4] bg-opacity-10 lg:p-12 p-6 h-[45rem] w-full">
                     <div className="col-span-full lg:col-span-7 lg:max-w-lg mx-auto">
                         <Typography
                             variant="h2"

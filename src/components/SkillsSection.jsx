@@ -4,7 +4,7 @@ import { Button, Checkbox, Input, Typography } from '@material-tailwind/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
 
 function SkillsSection({ exampleData, setExampleData }) {
-  const [noofContent, setNoofContent] = useState(1);
+  const [noofContent, setNoofContent] = useState(0);
 
   useEffect(() => {
     setNoofContent(exampleData?.skills?.length);
@@ -94,11 +94,11 @@ function SkillsSection({ exampleData, setExampleData }) {
             <div className=' w-fit flex gap-4 h-full'>
 
 
-              {noofContent != 1 &&
-                <Button onClick={() => handleRemoveskills(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
-                  remove
-                </Button>
-              }
+
+              <Button onClick={() => handleRemoveskills(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
+                remove
+              </Button>
+
             </div>
 
           </div>
@@ -129,7 +129,7 @@ function SkillsSection({ exampleData, setExampleData }) {
                     className=' '
                   />
                 </div>
-                  <div className=' flex gap-2'>
+                <div className=' flex gap-2'>
 
                   {exampleData.skills[i]?.keywords.length !== 1 &&
                     <MinusIcon onClick={() => handleRemovekeywords(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-blue-gray-700 border hover:border-red-500 hover:text-red-500 rounded-full' />
@@ -154,6 +154,15 @@ function SkillsSection({ exampleData, setExampleData }) {
 
         </div>
       ))
+      }
+      {noofContent == 0 &&
+        <div className=' col-span-2 w-full flex justify-center items-center'>
+
+          < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddskills}>
+            Add Skills
+          </Button>
+
+        </div>
       }
     </div >
   )

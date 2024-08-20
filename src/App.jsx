@@ -1,14 +1,13 @@
 
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from './pages/Login';
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import LandingPage from './pages/LandingPage';
 import ResumePage from './pages/resume-page/ResumePage';
 import { useEffect, useState } from "react";
 import getTemplateData from "./lib/getTemplateData";
 import latex from "./lib/latext";
-import { TextEditorReact } from "./components/textEditor/textEditor";
 import './App.css'
+
 
 function App() {
   const [isStarted, setIsStarted] = useState(false);
@@ -29,6 +28,8 @@ function App() {
   // }, [])
 
 
+
+
   return (
 
     <div className="w-full h-screen bg-[#f9fbfe] font-mono ">
@@ -36,9 +37,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/resume" element={<ResumePage />} />
-          <Route path="/e" element={<TextEditorReact />} />
         </Routes>
       </BrowserRouter>
     </div>

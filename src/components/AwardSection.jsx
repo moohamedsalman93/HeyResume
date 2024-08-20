@@ -7,7 +7,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 
 
 function AwardSection({ exampleData, setExampleData }) {
-  const [noofContent, setNoofContent] = useState(1);
+  const [noofContent, setNoofContent] = useState(0);
 
 
 
@@ -30,7 +30,7 @@ function AwardSection({ exampleData, setExampleData }) {
   const handleAddAward = () => {
     setExampleData(prevState => ({
       ...prevState,
-      awards: [...prevState.awards, { title: '', awarder: '', date: '', summary: ''}]
+      awards: [...prevState.awards, { title: '', awarder: '', date: '', summary: '' }]
     }));
   };
 
@@ -62,13 +62,11 @@ function AwardSection({ exampleData, setExampleData }) {
 
             <div className=' w-fit flex gap-4 h-full'>
 
+              <Button onClick={() => handleRemoveAward(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
+                remove
+              </Button>
+              {/* <TrashIcon onClick={() => handleRemoveAward(i)} className=' w-6 h-6 text-red-200 cursor-pointer hover:text-red-500 transition-colors duration-700'/> */}
 
-              {noofContent != 1 &&
-                // <Button onClick={() => handleRemoveAward(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
-                //   remove
-                // </Button>
-                <TrashIcon onClick={() => handleRemoveAward(i)} className=' w-6 h-6 text-red-200 cursor-pointer hover:text-red-500 transition-colors duration-700'/>
-              }
             </div>
 
           </div>
@@ -116,6 +114,15 @@ function AwardSection({ exampleData, setExampleData }) {
 
         </div>
       ))
+      }
+      {noofContent == 0 &&
+        <div className=' col-span-2 w-full flex justify-center items-center'>
+          
+            < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddAward}>
+              Add Award
+            </Button>
+          
+        </div>
       }
     </div >
   )

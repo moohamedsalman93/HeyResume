@@ -13,7 +13,7 @@ import React, { useEffect, useState } from 'react'
 import getTemplateData from '../../lib/getTemplateData';
 import latex from '../../lib/latext';
 import { pdfjs, Document, Page } from 'react-pdf'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, ChevronRightIcon, ClockIcon, DocumentTextIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, ShareIcon, ShoppingBagIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, ChevronRightIcon, ClockIcon, DocumentTextIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, RocketLaunchIcon, ShareIcon, ShoppingBagIcon } from '@heroicons/react/24/solid';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ProfileSection from '../../components/ProfileSection';
 import TemplateSection from '../../components/TemplateSection'
@@ -24,6 +24,11 @@ import ProjectSection from '../../components/ProjectSection'
 import AwardSection from '../../components/AwardSection'
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { supabase } from '../../lib/Auth/SupabseAuth';
+import { json, useNavigate } from 'react-router-dom';
+import formatDate from '../../components/FormateDate'
+import Lottie from "lottie-react";
+import loading from '../../assets/loading.json'
 
 
 
@@ -32,6 +37,12 @@ pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
 
 
 function ResumePage() {
+    const [userDetails, setUserDetails] = useState({
+        uuid: "",
+        name: "",
+        email: "",
+        profileImage: "",
+    });
     const [pdfUrl, setPdfUrl] = useState(null);
     const [selectedPage, setSelectedPage] = useState("Templates");
     const [numPages, setNumPages] = useState();
@@ -47,124 +58,80 @@ function ResumePage() {
         "Projects",
         "Awards",
     ])
-
-    const [exampleData, setExampleData] = useState()
-
+    const [exampleData, setExampleData] = useState(null)
     const [scale, setScale] = useState(0.8)
     const [openImage, setOpenImage] = useState('');
     const [imagePosition, setImagePosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
     const [open, setOpen] = useState(false);
-    const [historyData, setHistoryData] = useState([{
-        name: "salman's", date: "Jan 23, 2024", data:
-        {
-            "selectedTemplate": 1,
-            "basics": {
-                "name": "basith",
-                "email": "moohamedsalman93@gmail.com",
-                "phone": "9843594178",
-                "address": "28/5, junnath miyan street, parangipettai-608502",
-                "website": "moohamedsalman93.github.com/portfolio",
-                "summary": "Experienced software developer with a strong background in building scalable web applications. hgshdfhgshgafhgahsdgfjgasd idhasjfh dasjihfjhasji uiashdfjih dsifhjihsadji sdahfjiadshfi dsaifhjiadhsfji jisadhfiadhsf asdifhuisahdf sdiufhsauihdfi sadifhsduiahf sadijfiojogd ighidihiet8usdf ge9itgi9tjefdnh8g rutiejdgkdi9u "
-            },
-            "education": [{
-                "institution": "Jamal Mohamed College",
-                "studyType": "B.sc",
-                "area": "Computer Science",
-                "score": "6.8",
-                "startDate": "Jun-2019",
-                "endDate": "Apr-2022"
-            },
-            {
-                "institution": "",
-                "studyType": "",
-                "area": "",
-                "score": "",
-                "startDate": "Jan-2014",
-                "endDate": "Jan-2014"
-            }],
-            "work": [{
-                "name": "Vsolver",
-                "position": "Frontend Developer",
-                "location": "Trichy",
-                "startDate": "Feb-2023",
-                "endDate": "Sep-2023",
-                "highlights": ["Collabrated to manage the both frontend and backend",
-                    "the tech stack is used in project is reactjs,tailwindcss"]
-            },
-            {
-                "name": "Easy Out Desk",
-                "position": "Database Administrative",
-                "location": "Pondicherry",
-                "startDate": "Jul-2024",
-                "endDate": "Jan-2024",
-                "highlights": ["Gained the knowledge of  Database"]
-            }],
-            "skills": [{
-                "name": "Programming Languages",
-                "keywords": ["JavaScript",
-                    "Python",
-                    "Java"]
-            },
-            {
-                "name": "Frameworks",
-                "keywords": ["React",
-                    "Node.js",
-                    "Django"]
-            },
-            {
-                "name": "",
-                "keywords": [""]
-            }],
-            "projects": [{
-                "name": "ahsdha",
-                "url": "ghasgdhgas",
-                "description": "jasjdhj",
-                "keywords": ["reactjs"]
-            }],
-            "awards": [{
-                "title": "Best Developer Award",
-                "summary": "Awarded for outstanding performance in software development.",
-                "date": "Jan-2023",
-                "awarder": "Example Corp"
-            },
-            {
-                "title": "",
-                "awarder": "",
-                "date": "Jan-2024",
-                "summary": ""
-            }],
-            "headings": {
-                "education": "Education",
-                "work": "Experience",
-                "skills": "Skills",
-                "projects": "Projects",
-                "awards": "Awards"
-            },
-            "sections": ["profile",
-                "education",
-                "work",
-                "skills",
-                "projects",
-                "awards"]
+    const [historyData, setHistoryData] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+    const handleOpen = () => {
+        setOpen(!open);
+        setIsLoadingHistory(true)
+        const fetchData = async () => {
+            const { data, error } = await supabase.from('user_details').select('*').eq('uuid', userDetails?.uuid);
+            if (error) {
+                console.error('Error fetching data:', error);
+            } else {
+                setHistoryData(data);
+            }
+            setIsLoadingHistory(false)
         }
-    }])
 
-    const handleOpen = () => setOpen(!open);
+        fetchData();
+    }
     const controls = useAnimation();
+    const navigate = useNavigate()
 
+    const preData = {
+        "selectedTemplate": 1,
+        "basics": {
+            "name": "",
+            "email": "",
+            "phone": "",
+            "address": "",
+            "website": "",
+            "summary": ""
+        },
+        "education": [],
+        "work": [],
+        "skills": [],
+        "projects": [],
+        "awards": [],
+        "headings": {
+            "education": "Education",
+            "work": "Experience",
+            "skills": "Skills",
+            "projects": "Projects",
+            "awards": "Awards"
+        },
+        "sections": [
+            "profile",
+            "education",
+            "work",
+            "skills",
+            "projects",
+            "awards"
+        ]
+    }
 
-    useEffect(() => {
-        if (exampleData) {
-            localStorage.setItem('Data', JSON.stringify(exampleData));
-        }
-    }, [exampleData])
 
     useEffect(() => {
         const storedData = localStorage.getItem('Data');
-        if (storedData) {
-            setExampleData(JSON.parse(storedData));
+        if (storedData && exampleData != null) {
+            localStorage.setItem('Data', JSON.stringify(exampleData));
         }
-    }, [])
+        else if (storedData && exampleData == null) {
+            setExampleData(JSON.parse(storedData))
+        }
+        else {
+            localStorage.setItem('Data', JSON.stringify(preData));
+            setExampleData(preData)
+        }
+
+    }, [exampleData])
+
 
     const handleImageClick = (imageUrl, event) => {
         const imgRect = event.target.getBoundingClientRect();
@@ -192,9 +159,17 @@ function ResumePage() {
     }
 
     const generatePDF = async () => {
-        const { texDoc, opts } = getTemplateData(exampleData);
-        const pdfUrl = await latex(texDoc, opts);
-        setPdfUrl(pdfUrl);
+        setIsLoading(true)
+        try {
+            const { texDoc, opts } = getTemplateData(exampleData);
+            const pdfUrl = await latex(texDoc, opts);
+            setPdfUrl(pdfUrl);
+            setIsLoading(false)
+        } catch (err) {
+            setIsLoading(false)
+            console.log(err)
+        }
+
     };
 
     const handleEdit = (index) => {
@@ -202,12 +177,12 @@ function ResumePage() {
     }
 
     const generateAndDownload = async (index) => {
-        const { texDoc, opts } = getTemplateData(historyData[index]?.data);
+        const { texDoc, opts } = getTemplateData(JSON.parse(historyData[index]?.content));
         const pdfUrl = await latex(texDoc, opts);
         if (pdfUrl) {
             const link = document.createElement('a');
             link.href = pdfUrl;
-            link.setAttribute('download', historyData[index]?.name + '.pdf'); // You can specify the filename here
+            link.setAttribute('download', historyData[index]?.pdf_name + '.pdf'); // You can specify the filename here
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -239,8 +214,29 @@ function ResumePage() {
         setPageNumber(pageNumber - 1);
     };
 
-    const handleDownload = () => {
+    const handleDownload = async () => {
         if (pdfUrl) {
+
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error || !user) {
+                console.error('Failed to fetch user data');
+                return;
+            }
+            const { data, error: resumeError } = await supabase
+                .from('user_details')
+                .insert([
+                    {
+                        uuid: user.id,
+                        pdf_name: previewName,
+                        content: JSON.stringify(exampleData),
+                    }
+                ])
+                .single();
+            if (resumeError) {
+                console.error('Failed to save resume to database', resumeError);
+            }
+
+
             const link = document.createElement('a');
             link.href = pdfUrl;
             link.setAttribute('download', previewName + '.pdf'); // You can specify the filename here
@@ -258,7 +254,7 @@ function ResumePage() {
 
     const hanldeFarward = () => {
         const getIndex = contentPages.indexOf(selectedPage)
-        if (getIndex < contentPages.length -1 ) {
+        if (getIndex < contentPages.length - 1) {
             setSelectedPage(contentPages[getIndex + 1])
         }
     }
@@ -271,6 +267,42 @@ function ResumePage() {
         }
     }
 
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error || !user) {
+                navigate('/');
+            } else {
+                const token = localStorage.getItem('sb-jiacmpdzhulppqaqsbkb-auth-token');
+                if (token) {
+                    try {
+                        setUserDetails({
+                            uuid: user.id,
+                            name: user.user_metadata.name,
+                            email: user.user_metadata.email,
+                            profileImage: user.user_metadata.avatar_url
+                        })
+                        const tokenExpiry = JSON.parse(token)?.expires_at;
+                        const isTokenExpired = new Date(tokenExpiry * 1000) < new Date();
+                        if (isTokenExpired) {
+                            navigate('/');
+                        }
+
+                    } catch (error) {
+                        console.error('Invalid token:', error);
+                        navigate('/');
+                    }
+                }
+            }
+        };
+        checkSession();
+    }, []);
+
+
+    const handleLogout = () => {
+        supabase.auth.signOut();
+        navigate('/');
+    }
 
     return (
         <div className=' w-full h-full overflow-hidden relative flex flex-col justify-start items-start'>
@@ -278,7 +310,7 @@ function ResumePage() {
                 <div className="container mx-auto flex items-center justify-between h-full">
                     <div className=' flex items-center divide-x h-full space-x-2'>
                         <Typography color="blue-gray" className="text-2xl font-bold">
-                            <span className=' text-green-500'>Hey </span>
+                            <span className=' text-[#5e72e4]'>Hey </span>
                             Resume !
                         </Typography>
 
@@ -296,9 +328,17 @@ function ResumePage() {
 
                     <Popover placement="bottom-end">
                         <PopoverHandler>
-                            <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full'>
+                            <div className=' flex items-center gap-2 cursor-pointer'>
+                                <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full overflow-clip'>
+                                    <img src={userDetails?.profileImage} alt="" className=' w-full h-full object-cover' />
+                                </div>
+                                <div className=' flex flex-col w-[10rem]'>
+                                    <Typography className='text-blue-gray-700  w-[10rem] overflow-hidden text-ellipsis' variant='h6'>{userDetails?.name}</Typography>
+                                    <Typography className='text-blue-gray-700 w-[10rem] overflow-hidden text-ellipsis' variant='small'>{userDetails?.email}</Typography>
+                                </div>
 
                             </div>
+
                         </PopoverHandler>
                         <PopoverContent className="w-[12rem] divide-y-2 flex flex-col pl-10">
                             <div className=' h-10 flex  items-center w-[5.5rem] justify-between hover:text-blue-gray-900 cursor-pointer transition-colors duration-700'>
@@ -307,8 +347,8 @@ function ResumePage() {
                                 </Typography>
                                 <ShoppingBagIcon className=' h-4 w-4' />
                             </div>
-                            <div className=' h-10 flex  items-center w-[5.5rem] justify-between hover:text-blue-gray-900 cursor-pointer  transition-colors duration-700'>
-                                <Typography >
+                            <div onClick={() => handleLogout()} className=' h-10 flex  items-center w-[5.5rem] justify-between hover:text-red-500 cursor-pointer  transition-colors duration-700'>
+                                <Typography  >
                                     Log out
                                 </Typography>
                                 <ArrowRightStartOnRectangleIcon className=' h-4 w-4' />
@@ -319,10 +359,19 @@ function ResumePage() {
                 </div>
 
             </Navbar>
-            <div className=' w-full h-[93%] bg-green-50 p-2 flex '>
+            <div className=' w-full h-[93%] bg-[#5e72e4] bg-opacity-5 p-2 flex '>
 
                 <div className=' w-[15%] h-full'>
                     <div className=' p-5 bg-white gap-1  h-full flex flex-col justify-start    border-r '>
+
+                        <div className=' mt-2 mb-4'>
+                            <Typography
+                                variant="h6"
+                                className={` flex items-center group-hover:text-[#5e72e4] text-black`}
+                            >
+                                Sections
+                            </Typography>
+                        </div>
 
                         {
                             contentPages.map((item, index) =>
@@ -331,11 +380,11 @@ function ResumePage() {
                                         key={index}
                                         variant="paragraph"
                                         draggable
-                                        className={`${selectedPage === item ? 'text-green-500' : 'text-blue-gray-700'} ml-8 z-20 absolute flex items-center gap-2 font-medium  group-hover:text-green-500`}
+                                        className={`${selectedPage === item ? 'text-[#ffffff]' : 'text-blue-gray-700 group-hover:text-[#5e72e4]'} ml-8 z-20 absolute flex items-center gap-2 font-medium  `}
                                     >
                                         {item}
                                     </Typography>
-                                    <div className={` w-full h-10 py-2 ${selectedPage === item ? 'inset-0 ' : '-inset-96'} duration-700 transition-all  bg-green-50 z-10 rounded-lg pl-5 absolute`}>
+                                    <div className={` w-full h-10 py-2 ${selectedPage === item ? 'inset-0 ' : '-inset-96'} duration-700 transition-all  bg-[#5e72e4] z-10 rounded-lg pl-5 absolute`}>
 
                                     </div>
                                 </div>
@@ -343,16 +392,39 @@ function ResumePage() {
 
                         }
 
-                        <div onClick={handleOpen} className=' cursor-pointer group mt-12 w-full h-11 bg-[#212121] rounded-xl flex items-center gap-2 hover:shadow-md hover:shadow-green-200 duration-500 transition-all'>
+                        <div className=' mt-6'>
+                            <Typography
+                                variant="h6"
+                                className={` flex items-center group-hover:text-[#5e72e4] text-black`}
+                            >
+                                Other
+                            </Typography>
+                        </div>
+
+                        <div onClick={handleOpen} className=' cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#5e72e4] duration-700 transition-all '>
+                            <ClockIcon className=' ml-8  h-6 w-6 group-hover:text-[#5e72e4] text-blue-gray-700 ' />
                             <Typography
 
                                 variant="paragraph"
-                                color='white'
-                                className={` ml-8 flex items-center font-medium l`}
+
+                                className={` flex items-center group-hover:text-[#5e72e4] text-blue-gray-700 font-medium l`}
                             >
                                 History
                             </Typography>
-                            <ClockIcon className=' h-6 w-6 text-white group-hover:animate-spin duration-700' />
+
+                        </div>
+
+                        <div onClick={handleOpen} className=' cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#5e72e4] duration-700 transition-all '>
+                            <RocketLaunchIcon className=' ml-8  h-6 w-6 group-hover:text-[#5e72e4] text-blue-gray-700 ' />
+                            <Typography
+
+                                variant="paragraph"
+
+                                className={`flex items-center group-hover:text-[#5e72e4] text-blue-gray-700 font-medium l`}
+                            >
+                                AI Creation
+                            </Typography>
+
                         </div>
 
                     </div>
@@ -382,9 +454,9 @@ function ResumePage() {
                     </div>
                     <div className=' h-[7.5%] w-full border-t-2 flex gap-4 items-center justify-between px-4'>
 
-                        <div className=' gap-4 flex items-end select-none'>
+                        <div className=' w-full gap-4 flex items-end select-none'>
                             <ChevronLeftIcon onClick={hanldeBack} className=' cursor-pointer hover:border h-8 w-8 hover:shadow-xl rounded-md' />
-                            <div className="w-[17rem]">
+                            <div className="w-full">
                                 <div className="mb-2 flex items-center justify-center gap-4">
                                     <Typography color="blue-gray" variant="h6">
                                         Completed
@@ -396,13 +468,7 @@ function ResumePage() {
                         </div>
 
 
-                        <div className=' flex items-center gap-6'>
-                            <Tooltip content="Save">
-                                <Button onClick={generatePDF}>
-                                    <DocumentTextIcon strokeWidth={2} className="h-4 w-4 text-white transition-all duration-500 " />
-                                </Button>
-                            </Tooltip>
-                        </div>
+
                     </div>
                 </div>
 
@@ -453,7 +519,21 @@ function ResumePage() {
                                 </IconButton>
                             </Tooltip>
 
-                            <div className=' w-6'></div>
+                            <div className=' h-8 my-auto w-[0.5px] bg-blue-gray-300'></div>
+
+                            <div className=' flex items-center w-fit'>
+                                <Tooltip content="Save">
+                                    <button onClick={generatePDF} className=' flex items-center gap-2 py-[0.6rem] px-2 bg-white rounded-lg hover:shadow-md  border duration-500 transition-all'>
+                                        <Typography
+                                            className='overflow-hidden text-ellipsis items-center text-black'
+                                            variant='small'
+                                        >
+                                            Save
+                                        </Typography>
+                                        <DocumentTextIcon strokeWidth={2} className="h-4 w-4 text-black transition-all duration-500 " />
+                                    </button>
+                                </Tooltip>
+                            </div>
 
                             <IconButton disabled={!pdfUrl} onClick={handleDownload} >
                                 <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4  text-white transition-all duration-500 " />
@@ -462,25 +542,46 @@ function ResumePage() {
                         </div>
 
 
-
-
                     </div>
 
                     <div className=' w-full h-full flex justify-center py-2 items-start overflow-auto relative'>
-                        <Document file={pdfUrl || "/blank.pdf"} onLoadSuccess={onDocumentLoadSuccess} >
-                            <div className=' border shadow-md'>
-                                <Page
-                                    scale={scale}
-                                    pageNumber={pageNumber}
-                                    renderAnnotationLayer={false}
-                                    renderTextLayer={false}
-                                    loading=""
-                                />
+                        {isLoading ? <div className=' flex flex-col justify-center items-center h-full'>
+                            <Lottie animationData={loading} loop={true} className=' w-[7rem]' />
+                        </div> :
+                            (!pdfUrl ? <div className=' flex flex-col justify-center items-center h-full'>
+                                <Typography
+                                    className='overflow-hidden text-ellipsis items-center text-blue-gray-700'
+                                    variant='h6'
+                                >
+                                    Click save button to generate pdf
+                                </Typography>
+                                <div className=' flex items-center gap-2 py-[0.6rem] px-2 '>
+                                    <Typography
+                                        className='overflow-hidden text-ellipsis items-center text-black'
+                                        variant='small'
+                                    >
+                                        Save
+                                    </Typography>
+                                    <DocumentTextIcon strokeWidth={2} className="h-4 w-4 text-black transition-all duration-500 " />
+                                </div>
                             </div>
+                                :
+                                <Document file={pdfUrl || "/blank.pdf"} onLoadSuccess={onDocumentLoadSuccess} >
+
+                                    <div className=' border shadow-md'>
+                                        <Page
+                                            scale={scale}
+                                            pageNumber={pageNumber}
+                                            renderAnnotationLayer={false}
+                                            renderTextLayer={false}
+                                            loading=""
+                                        />
+                                    </div>
 
 
-                        </Document>
-
+                                </Document>
+                            )
+                        }
 
                     </div>
 
@@ -515,44 +616,48 @@ function ResumePage() {
                 <Dialog size='lg' open={open} handler={handleOpen}>
                     <DialogHeader>
 
-                        <Typography variant='h6' className=' text-[#344767] '>
-                            Hsitory
+                        <Typography variant='h5' className=' text-[#344767] '>
+                            History
                         </Typography>
                     </DialogHeader>
                     <DialogBody>
-                        <div className=' h-[30rem] px-5 flex flex-col items-center'>
-                            <div className=' h-12 grid grid-cols-3 w-full border-b place-content-center px-10  '>
-                                <Typography className=' text-sm text-[#acb6c7] '>
-                                    Name
-                                </Typography>
-                                <Typography className=' text-sm text-[#acb6c7] '>
-                                    Created                                </Typography>
-                                <Typography className=' text-sm text-[#acb6c7] '>
-                                    Actions
+                        {isLoadingHistory ? <div className=' flex flex-col justify-center items-center h-full w-full'>
+                            <Lottie animationData={loading} loop={true} className=' w-[7rem]' />
+                        </div> :
+                            <div className=' h-[30rem] px-5 flex flex-col items-center'>
+                                <div className=' h-12 grid grid-cols-3 w-full border-b place-content-center px-10  '>
+                                    <Typography className=' text-sm text-[#acb6c7] '>
+                                        Name
+                                    </Typography>
+                                    <Typography className=' text-sm text-[#acb6c7] '>
+                                        Created                                </Typography>
+                                    <Typography className=' text-sm text-[#acb6c7] '>
+                                        Actions
 
-                                </Typography>
-                            </div>
-                            <div className=' h-full  w-full pt-2 divide-y-0'>
-                                {historyData.map((item, index) =>
-                                    <div key={index} className=' h-14 grid grid-cols-3 w-full place-content-center px-10 '>
-                                        <Typography className=' text-sm text-[#344767] '>
-                                            {item?.name}
-                                        </Typography>
-                                        <Typography className=' text-sm text-[#344767] '>
-                                            {item.date}
-                                        </Typography>
-                                        <div className=' gap-4 flex text-[#4caf50]'>
-                                            <ArrowDownTrayIcon onClick={() => generateAndDownload(index)} className=' w-6 h-6 cursor-pointer hover:text-green-200' />
-                                            <PencilSquareIcon onClick={() => handleEdit(index)} className=' w-6 h-6 cursor-pointer hover:text-green-200' />
+                                    </Typography>
+                                </div>
+                                <div className=' h-full  w-full pt-2 divide-y-0'>
+                                    {historyData.map((item, index) =>
+                                        <div key={index} className=' h-14 grid grid-cols-3 w-full place-content-center px-10 '>
+                                            <Typography className=' text-sm text-[#344767] '>
+                                                {item?.pdf_name}
+                                            </Typography>
+                                            <Typography className=' text-sm text-[#344767] '>
+                                                {formatDate(item.created_at)}
+                                            </Typography>
+                                            <div className=' gap-4 flex text-[#5e72e4] '>
+                                                <ArrowDownTrayIcon onClick={() => generateAndDownload(index)} className=' w-6 h-6 cursor-pointer  hover:text-[#5e72e45a]' />
+                                                <PencilSquareIcon onClick={() => handleEdit(index)} className=' w-6 h-6 cursor-pointer hover:text-[#5e72e45a] ' />
 
+                                            </div>
                                         </div>
-                                    </div>
-                                )
+                                    )
 
-                                }
+                                    }
+                                </div>
+
                             </div>
-
-                        </div>
+                        }
                     </DialogBody>
                     <DialogFooter>
 
