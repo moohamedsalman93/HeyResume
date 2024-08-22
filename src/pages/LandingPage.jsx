@@ -146,15 +146,15 @@ function LandingPage() {
             <Navbar shadow={false} fullWidth className="border-0">
                 <div className="container mx-auto flex items-center justify-between">
                     <Typography color="blue-gray" className="text-2xl font-bold">
-                        <span className=' text-[#5e72e4]'>Hey </span>
+                        <span className=' text-[#2dce89]'>Hey </span>
                         Resume !
                     </Typography>
 
                     <div className="hidden items-center gap-4 lg:flex">
 
                         <div onClick={() => signInWithGoogle()} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
-                            <div className='md:w-[6rem] bg-[#5e72e4] absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
-                            <div className=' space-x-1 absolute z-40 font-semibold text-[#5e72e4] duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-2xl w-[5.7rem]'>
+                            <div className='md:w-[6rem] bg-[#2dce89] absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' space-x-1 absolute z-40 font-semibold text-[#2dce89] duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-2xl w-[5.7rem]'>
                                 <p>Sign in</p>
 
                                 <img
@@ -200,7 +200,7 @@ function LandingPage() {
                         className="mx-auto my-6 w-full leading-snug  !text-2xl lg:max-w-3xl lg:!text-5xl"
                     >
                         Land your{" "}
-                        <span className="text-[#5e72e4] leading-snug ">
+                        <span className="text-[#2dce89] leading-snug ">
                             dream job
                         </span>{" "}
                         interview.
@@ -214,12 +214,12 @@ function LandingPage() {
                     <div className="mt-8  w-full place-items-start md:justify-center">
 
 
-                        <div onClick={() => signInWithGoogle()} className="w-full mx-auto px-4  md:w-[12rem] overflow-clip border h-10 group relative flex flex-col justify-center items-center rounded-[0.6rem] hover:shadow-none shadow-md shadow-[#5e72e482] cursor-pointer">
-                            <div className='md:w-[12rem] bg-[#5e72e4] absolute h-12 z-20 rounded-[0.6rem] inset-y-52 group-hover:inset-0 duration-700 transition-all'></div>
-                            <div className=' absolute z-40 text-[#5e72e4] font-semibold duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-[0.5rem] w-[11.7rem]'>Build My Resume</div>
+                        <div onClick={() => signInWithGoogle()} className="w-full mx-auto px-4  md:w-[12rem] overflow-clip border h-10 group relative flex flex-col justify-center items-center rounded-[0.6rem] hover:shadow-none shadow-md shadow-[#2dce8982] cursor-pointer">
+                            <div className='md:w-[12rem] bg-[#2dce89] absolute h-12 z-20 rounded-[0.6rem] inset-y-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' absolute z-40 text-[#2dce89] font-semibold duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-[0.5rem] w-[11.7rem]'>Build My Resume</div>
                         </div>
 
-                        {/* <div className="w-full mx-auto bg-[#5e72e4] px-4 md:w-[12rem] overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-md cursor-pointer">
+                        {/* <div className="w-full mx-auto bg-[#2dce89] px-4 md:w-[12rem] overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-md cursor-pointer">
                             <div className='md:w-[12rem] bg-[#212121] absolute h-12 z-20 rounded-md inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
                             <div className=' absolute z-40 text-white'>Build My Resume</div>
                         </div> */}
@@ -256,12 +256,12 @@ function LandingPage() {
 
                 </div>
 
-                <div className="px-4 grid grid-cols-3 place-items-center place-content-start gap-6">
+                {/* <div className="px-4 grid grid-cols-3 place-items-center place-content-start gap-6">
 
                     {cardData.map((item, index) =>
                         <Card key={index} className=' hover:shadow-green-500 hover:shadow-md hover:border-none transition-all duration-300 border-green-500 border shadow-none'>
                             <CardBody className="max-w-sm md:p-5 h-[20rem]">
-                                {/* <HeartIcon className="w-14 h-14 text-gray-900" /> */}
+                                
                                 <Typography
                                     color="blue-gray"
                                     className="mb-4 !mt-4 "
@@ -280,7 +280,7 @@ function LandingPage() {
                         </Card>
                     )
                     }
-                </div>
+                </div> */}
 
                 <div className="container mx-auto my-auto flex flex-row justify-evenly items-center">
 
@@ -309,10 +309,7 @@ function LandingPage() {
                 </div>
 
 
-
-
-
-                <div className="grid grid-cols-12 items-center lg:gap-x-10 gap-y-10 rounded-2xl bg-[#5e72e4] bg-opacity-10 lg:p-12 p-6 h-[45rem] w-full">
+                <div className="grid grid-cols-12 items-center lg:gap-x-10 gap-y-10 rounded-2xl bg-[#2dce89] bg-opacity-10 lg:p-12 p-6 h-[45rem] w-full">
                     <div className="col-span-full lg:col-span-7 lg:max-w-lg mx-auto">
                         <Typography
                             variant="h2"
@@ -435,7 +432,7 @@ function LandingPage() {
                 </div>
 
 
-                <div className=' w-full '>
+                {/* <div className=' w-full '>
                     <div className=" container grid min-h-full place-items-center">
                         <div className="container mx-auto max-w-3xl px-8">
                             <div className="grid place-items-center py-20 text-center">
@@ -505,7 +502,7 @@ function LandingPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 <div className="px-8 py-28">
                     <div className="container mx-auto">

@@ -29,7 +29,7 @@ import { json, useNavigate } from 'react-router-dom';
 import formatDate from '../../components/FormateDate'
 import Lottie from "lottie-react";
 import loading from '../../assets/loading.json'
-
+import logo from '../../assets/logo.png'
 
 
 const workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
@@ -66,6 +66,12 @@ function ResumePage() {
     const [historyData, setHistoryData] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+    const [aiOpen, setAiOpen] = useState(false)
+    const [confirmPopup, setConfirmPopup] = useState(-1);
+    const toggleClass = "transform translate-x-4";
+
+
+
     const handleOpen = () => {
         setOpen(!open);
         setIsLoadingHistory(true)
@@ -81,6 +87,10 @@ function ResumePage() {
 
         fetchData();
     }
+
+
+
+    const [isDark, setDark] = useState(true);
     const controls = useAnimation();
     const navigate = useNavigate()
 
@@ -172,8 +182,21 @@ function ResumePage() {
 
     };
 
-    const handleEdit = (index) => {
-        localStorage.setItem('Data', JSON.stringify(historyData[index]?.data));
+    //#dark mode regian
+    React.useEffect(() => {
+        if (!isDark) {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+    }, [isDark]);
+    //#end region
+
+    const handleEdit = () => {
+        setConfirmPopup(-1)
+        setOpen(false)
+        // localStorage.setItem('Data', JSON.stringify(historyData[confirmPopup]?.content));
+        setExampleData(historyData[confirmPopup]?.content)
     }
 
     const generateAndDownload = async (index) => {
@@ -310,7 +333,7 @@ function ResumePage() {
                 <div className="container mx-auto flex items-center justify-between h-full">
                     <div className=' flex items-center divide-x h-full space-x-2'>
                         <Typography color="blue-gray" className="text-2xl font-bold">
-                            <span className=' text-[#5e72e4]'>Hey </span>
+                            <span className=' text-[#2dce89]'>Hey </span>
                             Resume !
                         </Typography>
 
@@ -340,14 +363,28 @@ function ResumePage() {
                             </div>
 
                         </PopoverHandler>
-                        <PopoverContent className="w-[12rem] divide-y-2 flex flex-col pl-10">
-                            <div className=' h-10 flex  items-center w-[5.5rem] justify-between hover:text-blue-gray-900 cursor-pointer transition-colors duration-700'>
+                        <PopoverContent className="w-[12rem] divide-y-2 flex flex-col pl-5">
+
+                            {/* <div className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-blue-gray-900 cursor-pointer transition-colors duration-700'>
+
+                                <Typography >
+                                    Dark Mode
+                                </Typography>
+                                <div className="md:w-8 md:h-4 w-8 h-4 flex items-center bg-[#003F3B] rounded-full p-1 cursor-pointer"
+                                    onClick={() => {
+                                        setDark(!isDark);
+                                    }}>
+                                    <div className={"bg-white dark:bg-[#14171d] w-3 h-3 rounded-full shadow-md transform duration-300 ease-in-out " + (isDark ? null : toggleClass)}></div>
+                                </div>
+                            </div> */}
+
+                            <div className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-blue-gray-900 cursor-pointer transition-colors duration-700'>
                                 <Typography >
                                     Order
                                 </Typography>
                                 <ShoppingBagIcon className=' h-4 w-4' />
                             </div>
-                            <div onClick={() => handleLogout()} className=' h-10 flex  items-center w-[5.5rem] justify-between hover:text-red-500 cursor-pointer  transition-colors duration-700'>
+                            <div onClick={() => handleLogout()} className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-red-500 cursor-pointer  transition-colors duration-700'>
                                 <Typography  >
                                     Log out
                                 </Typography>
@@ -359,15 +396,15 @@ function ResumePage() {
                 </div>
 
             </Navbar>
-            <div className=' w-full h-[93%] bg-[#5e72e4] bg-opacity-5 p-2 flex '>
+            <div className=' w-full h-[93%] bg-[#2dce89] bg-opacity-5 p-2 flex dark:bg-[#14171d] '>
 
                 <div className=' w-[15%] h-full'>
-                    <div className=' p-5 bg-white gap-1  h-full flex flex-col justify-start    border-r '>
+                    <div className=' p-5 bg-white dark:bg-[#14171d]gap-1  h-full flex flex-col justify-start    border-r '>
 
                         <div className=' mt-2 mb-4'>
                             <Typography
                                 variant="h6"
-                                className={` flex items-center group-hover:text-[#5e72e4] text-black`}
+                                className={` flex items-center group-hover:text-[#2dce89] text-black`}
                             >
                                 Sections
                             </Typography>
@@ -380,11 +417,11 @@ function ResumePage() {
                                         key={index}
                                         variant="paragraph"
                                         draggable
-                                        className={`${selectedPage === item ? 'text-[#ffffff]' : 'text-blue-gray-700 group-hover:text-[#5e72e4]'} ml-8 z-20 absolute flex items-center gap-2 font-medium  `}
+                                        className={`${selectedPage === item ? 'text-[#ffffff]' : 'text-blue-gray-700 group-hover:text-[#2dce89]'} ml-8 z-20 absolute flex items-center gap-2 font-medium  `}
                                     >
                                         {item}
                                     </Typography>
-                                    <div className={` w-full h-10 py-2 ${selectedPage === item ? 'inset-0 ' : '-inset-96'} duration-700 transition-all  bg-[#5e72e4] z-10 rounded-lg pl-5 absolute`}>
+                                    <div className={` w-full h-10 py-2 ${selectedPage === item ? 'inset-0 ' : '-inset-96'} duration-700 transition-all  bg-[#2dce89] z-10 rounded-lg pl-5 absolute`}>
 
                                     </div>
                                 </div>
@@ -395,32 +432,32 @@ function ResumePage() {
                         <div className=' mt-6'>
                             <Typography
                                 variant="h6"
-                                className={` flex items-center group-hover:text-[#5e72e4] text-black`}
+                                className={` flex items-center group-hover:text-[#2dce89] text-black`}
                             >
                                 Other
                             </Typography>
                         </div>
 
-                        <div onClick={handleOpen} className=' cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#5e72e4] duration-700 transition-all '>
-                            <ClockIcon className=' ml-8  h-6 w-6 group-hover:text-[#5e72e4] text-blue-gray-700 ' />
+                        <div onClick={handleOpen} className=' cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#2dce89] duration-700 transition-all '>
+                            <ClockIcon className=' ml-8  h-6 w-6 group-hover:text-[#2dce89] text-blue-gray-700 ' />
                             <Typography
 
                                 variant="paragraph"
 
-                                className={` flex items-center group-hover:text-[#5e72e4] text-blue-gray-700 font-medium l`}
+                                className={` flex items-center group-hover:text-[#2dce89] text-blue-gray-700 font-medium l`}
                             >
                                 History
                             </Typography>
 
                         </div>
 
-                        <div onClick={handleOpen} className=' cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#5e72e4] duration-700 transition-all '>
-                            <RocketLaunchIcon className=' ml-8  h-6 w-6 group-hover:text-[#5e72e4] text-blue-gray-700 ' />
+                        <div onClick={() => setAiOpen(true)} className=' mt-2 cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#2dce89] duration-700 transition-all '>
+                            <RocketLaunchIcon className=' ml-8  h-6 w-6 group-hover:text-[#2dce89] text-blue-gray-700 ' />
                             <Typography
 
                                 variant="paragraph"
 
-                                className={`flex items-center group-hover:text-[#5e72e4] text-blue-gray-700 font-medium l`}
+                                className={`flex items-center group-hover:text-[#2dce89] text-blue-gray-700 font-medium l`}
                             >
                                 AI Creation
                             </Typography>
@@ -431,9 +468,9 @@ function ResumePage() {
 
                 </div>
 
-                <div className=' w-[45%] h-full bg-white '>
+                <div className=' w-[45%] h-full bg-white dark:bg-[#14171d] '>
 
-                    <div className='h-[92.5%] w-full overflow-y-auto p-2 bg-white shadow-inner'>
+                    <div className='h-[92.5%] w-full overflow-y-auto p-2 bg-white dark:bg-[#14171d] shadow-inner'>
                         <div className=' h-[7.5%] w-full border-b-2 flex items-center justify-between px-4'>
                             <Typography
                                 variant="h6"
@@ -473,7 +510,7 @@ function ResumePage() {
                 </div>
 
 
-                <div className=' w-[40%] h-full  overflow-hidden mx-4 bg-white flex flex-col justify-start items-center space-y-2'>
+                <div className=' w-[40%] h-full  overflow-hidden mx-4 bg-white dark:bg-[#14171d] flex flex-col justify-start items-center space-y-2'>
                     <div className='h-14 w-full flex  justify-between pr-4 items-center border-b py-3'>
                         <div className=' flex flex-col space-y-1 pl-2'>
                             {
@@ -523,7 +560,7 @@ function ResumePage() {
 
                             <div className=' flex items-center w-fit'>
                                 <Tooltip content="Save">
-                                    <button onClick={generatePDF} className=' flex items-center gap-2 py-[0.6rem] px-2 bg-white rounded-lg hover:shadow-md  border duration-500 transition-all'>
+                                    <button onClick={generatePDF} className=' flex items-center gap-2 py-[0.6rem] px-2 bg-white dark:bg-[#14171d] rounded-lg hover:shadow-md  border duration-500 transition-all'>
                                         <Typography
                                             className='overflow-hidden text-ellipsis items-center text-black'
                                             variant='small'
@@ -620,50 +657,114 @@ function ResumePage() {
                             History
                         </Typography>
                     </DialogHeader>
-                    <DialogBody>
-                        {isLoadingHistory ? <div className=' flex flex-col justify-center items-center h-full w-full'>
-                            <Lottie animationData={loading} loop={true} className=' w-[7rem]' />
-                        </div> :
-                            <div className=' h-[30rem] px-5 flex flex-col items-center'>
-                                <div className=' h-12 grid grid-cols-3 w-full border-b place-content-center px-10  '>
-                                    <Typography className=' text-sm text-[#acb6c7] '>
-                                        Name
-                                    </Typography>
-                                    <Typography className=' text-sm text-[#acb6c7] '>
-                                        Created                                </Typography>
-                                    <Typography className=' text-sm text-[#acb6c7] '>
-                                        Actions
+                    <DialogBody className=' relative flex flex-col items-center w-full '>
+                        {
+                            confirmPopup != -1 ?
+                                <div className=' flex flex-col items-center'>
+                                    <Typography >Your current changes will be dicord</Typography>
+                                    <Typography variant='h6' > Are you sure to edit this  ?  {historyData[confirmPopup]?.pdf_name}.pdf -  {formatDate(historyData[confirmPopup]?.created_at)}</Typography>
 
-                                    </Typography>
                                 </div>
-                                <div className=' h-full  w-full pt-2 divide-y-0'>
-                                    {historyData.map((item, index) =>
-                                        <div key={index} className=' h-14 grid grid-cols-3 w-full place-content-center px-10 '>
-                                            <Typography className=' text-sm text-[#344767] '>
-                                                {item?.pdf_name}
-                                            </Typography>
-                                            <Typography className=' text-sm text-[#344767] '>
-                                                {formatDate(item.created_at)}
-                                            </Typography>
-                                            <div className=' gap-4 flex text-[#5e72e4] '>
-                                                <ArrowDownTrayIcon onClick={() => generateAndDownload(index)} className=' w-6 h-6 cursor-pointer  hover:text-[#5e72e45a]' />
-                                                <PencilSquareIcon onClick={() => handleEdit(index)} className=' w-6 h-6 cursor-pointer hover:text-[#5e72e45a] ' />
+                                :
+                                (isLoadingHistory ?
+                                    <div className=' flex flex-col justify-center items-center h-full w-full'>
+                                        <Lottie animationData={loading} loop={true} className=' w-[7rem]' />
+                                    </div> :
+                                    <div className=' h-[30rem] w-full px-5 flex flex-col items-center'>
 
-                                            </div>
+                                        <div className=' h-12 grid grid-cols-3 w-full border-b place-content-center px-10  '>
+                                            <Typography className=' text-sm text-[#acb6c7] '>
+                                                Name
+                                            </Typography>
+                                            <Typography className=' text-sm text-[#acb6c7] '>
+                                                Created                                </Typography>
+                                            <Typography className=' text-sm text-[#acb6c7] '>
+                                                Actions
+
+                                            </Typography>
                                         </div>
-                                    )
+                                        <div className=' h-full  w-full pt-2 divide-y-0'>
+                                            {historyData.map((item, index) =>
+                                                <div key={index} className=' h-14 grid grid-cols-3 w-full place-content-center px-10 '>
+                                                    <Typography className=' text-sm text-[#344767] '>
+                                                        {item?.pdf_name}
+                                                    </Typography>
+                                                    <Typography className=' text-sm text-[#344767] '>
+                                                        {formatDate(item.created_at)}
+                                                    </Typography>
 
-                                    }
-                                </div>
+                                                    <div className=' gap-4 flex text-[#2dce89] '>
+                                                        <ArrowDownTrayIcon onClick={() => generateAndDownload(index)} className=' w-6 h-6 cursor-pointer  hover:text-[#2dce895a]' />
+                                                        <PencilSquareIcon onClick={() => setConfirmPopup(index)} className=' w-6 h-6 cursor-pointer hover:text-[#2dce895a] ' />
+                                                    </div>
 
-                            </div>
+                                                </div>
+                                            )
+
+                                            }
+                                        </div>
+
+                                    </div>
+                                )
                         }
+
+
+
                     </DialogBody>
                     <DialogFooter>
+                        {
+                            confirmPopup != -1 ?
+                                <div className=' flex gap-2'>
+                                    <Button variant="gradient" color="black" onClick={() => setConfirmPopup(-1)}>
+                                        <span>Cancel</span>
+                                    </Button>
+                                    <Button variant="gradient" color="green" onClick={handleEdit}>
+                                        <span>Confirm</span>
+                                    </Button>
+                                </div>
+                                :
+                                <Button variant="gradient" color="green" onClick={handleOpen}>
+                                    <span>Close</span>
+                                </Button>
+                        }
+                    </DialogFooter>
+                </Dialog>
 
-                        <Button variant="gradient" color="green" onClick={handleOpen}>
-                            <span>Close</span>
+                <Dialog size='lg' open={aiOpen} handler={() => setAiOpen(false)}>
+                    <DialogHeader className=' gap-2  flex'>
+
+                        <Typography variant='h5' className=' text-[#344767] '>
+                            AI Creation
+                        </Typography>
+
+
+                    </DialogHeader>
+                    <DialogBody>
+                        <div className=' flex flex-col gap-4 justify-start px-10 '>
+                            <div className=' flex justify-between items-end'>
+                                <Typography className=" text-[#a2a2a2] text-md font-normal">
+                                    Describe about you
+                                </Typography>
+                                <Typography className=" text-[#2dce89] text-xs font-normal cursor-pointer">
+                                    Example
+                                </Typography>
+                            </div>
+
+                            <div className=' flex items-center gap-2 w-full '>
+                                <textarea placeholder="Write the Description here " className=' p-1 text-sm  min-h-[8rem]   w-full overflow-hidden transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                            </div>
+                        </div>
+                    </DialogBody>
+                    <DialogFooter className=' gap-2'>
+
+                        <Button variant="gradient" color="black" onClick={() => setAiOpen(false)}>
+                            <span>{'Cancel'}</span>
                         </Button>
+
+                        <Button disabled variant="gradient" color="green" onClick={() => setAiOpen(false)}>
+                            <span>Upcomming</span>
+                        </Button>
+
                     </DialogFooter>
                 </Dialog>
 
@@ -709,7 +810,7 @@ function ResumePage() {
                 )}
             </AnimatePresence>
 
-        </div>
+        </div >
     )
 }
 
