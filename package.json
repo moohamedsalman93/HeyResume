@@ -23,6 +23,7 @@
     "axios": "^1.7.2",
     "clsx": "^2.1.1",
     "common-tags": "^1.8.2",
+    "compromise": "^14.14.0",
     "date-fns": "^3.6.0",
     "firebase": "^10.12.4",
     "framer-motion": "^11.3.12",
@@ -37,6 +38,7 @@
     "react-pdf": "^5.7.2",
     "react-router-dom": "^6.25.1",
     "react-tailwindcss-datepicker": "^1.6.6",
+    "stopword": "^3.1.1",
     "swiftlatex": "https://github.com/ducaale/SwiftLaTeX/releases/download/v1.0.0-experimental-9902734/swiftlatex-1.0.0-experimental-9902734.tgz",
     "tailwind-merge": "^2.4.0",
     "uuid": "^10.0.0"

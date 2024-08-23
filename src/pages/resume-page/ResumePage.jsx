@@ -8,12 +8,13 @@ import {
     PopoverHandler,
     PopoverContent,
     Progress,
+    Chip,
 } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
 import getTemplateData from '../../lib/getTemplateData';
 import latex from '../../lib/latext';
 import { pdfjs, Document, Page } from 'react-pdf'
-import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, ChevronRightIcon, ClockIcon, DocumentTextIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, RocketLaunchIcon, ShareIcon, ShoppingBagIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, ChevronRightIcon, ClockIcon, DocumentTextIcon, KeyIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, RocketLaunchIcon, ShareIcon, ShoppingBagIcon } from '@heroicons/react/24/solid';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import ProfileSection from '../../components/ProfileSection';
 import TemplateSection from '../../components/TemplateSection'
@@ -25,11 +26,13 @@ import AwardSection from '../../components/AwardSection'
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { supabase } from '../../lib/Auth/SupabseAuth';
-import { json, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import formatDate from '../../components/FormateDate'
 import Lottie from "lottie-react";
 import loading from '../../assets/loading.json'
-import logo from '../../assets/logo.png'
+import nlp from 'compromise';
+import { removeStopwords } from 'stopword';
+
 
 
 const workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
@@ -67,9 +70,13 @@ function ResumePage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingHistory, setIsLoadingHistory] = useState(true);
     const [aiOpen, setAiOpen] = useState(false)
+    const [keyOpen, setKeyOpen] = useState(false)
     const [confirmPopup, setConfirmPopup] = useState(-1);
-    const toggleClass = "transform translate-x-4";
-
+    const [keywords, setKeywords] = useState([]);
+    const [jobDescription, setJobDescription] = useState('');
+    const [isDark, setDark] = useState(true);
+    const controls = useAnimation();
+    const navigate = useNavigate()
 
 
     const handleOpen = () => {
@@ -88,11 +95,50 @@ function ResumePage() {
         fetchData();
     }
 
+    const techKeywords = [
+        'javascript', 'reactjs', 'react', 'nodejs', 'node', 'html', 'css',
+        'firebase', 'mongodb', 'express', 'angular', 'vue', 'typescript', 'python',
+        'java', 'flutter', 'dart', 'kotlin', 'swift', 'ios', 'android', 'aws',
+        'azure', 'docker', 'kubernetes', 'graphql'
+    ];
 
+    function extractKeywords() {
+        // NLP processing with Compromise
+        if (!jobDescription) {
+            return
+        }
 
-    const [isDark, setDark] = useState(true);
-    const controls = useAnimation();
-    const navigate = useNavigate()
+        let doc = nlp(jobDescription);
+
+        // Extract relevant keywords (nouns and verbs)
+        let skills = doc.nouns().out('array'); // Extract nouns for skills, technologies, etc.
+        let actions = doc.verbs().out('array'); // Extract verbs for actions, responsibilities, etc.
+
+        // Combine skills and actions
+        let keywords = [...skills, ...actions].map(word => word.toLowerCase());
+
+        // Remove stop words
+        keywords = removeStopwords(keywords);
+
+        // Prioritize tech-related keywords
+        let prioritizedKeywords = [];
+        techKeywords.forEach(tech => {
+            if (keywords.includes(tech)) {
+                prioritizedKeywords.push(tech);
+            }
+        });
+
+        // Add remaining keywords that are not in the tech priority list
+        let remainingKeywords = keywords.filter(word => !prioritizedKeywords.includes(word));
+
+        // Combine prioritized and remaining keywords
+        keywords = [...prioritizedKeywords, ...remainingKeywords];
+
+        // Remove duplicates
+        keywords = [...new Set(keywords)];
+
+        setKeywords(keywords)
+    }
 
     const preData = {
         "selectedTemplate": 1,
@@ -464,6 +510,19 @@ function ResumePage() {
 
                         </div>
 
+                        <div onClick={() => setKeyOpen(true)} className=' mt-2 cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#2dce89] duration-700 transition-all '>
+                            <KeyIcon className=' ml-8  h-6 w-6 group-hover:text-[#2dce89] text-blue-gray-700 ' />
+                            <Typography
+
+                                variant="paragraph"
+
+                                className={`flex items-center group-hover:text-[#2dce89] text-blue-gray-700 font-medium l`}
+                            >
+                                Keywords
+                            </Typography>
+
+                        </div>
+
                     </div>
 
                 </div>
@@ -723,7 +782,7 @@ function ResumePage() {
                                     </Button>
                                 </div>
                                 :
-                                <Button variant="gradient" color="green" onClick={handleOpen}>
+                                <Button variant="gradient" color="black " onClick={handleOpen}>
                                     <span>Close</span>
                                 </Button>
                         }
@@ -763,6 +822,51 @@ function ResumePage() {
 
                         <Button disabled variant="gradient" color="green" onClick={() => setAiOpen(false)}>
                             <span>Upcomming</span>
+                        </Button>
+
+                    </DialogFooter>
+                </Dialog>
+
+                <Dialog size='lg' open={keyOpen} handler={() => setKeyOpen(false)}>
+                    <DialogHeader className=' gap-2  flex'>
+
+                        <Typography variant='h5' className=' text-[#344767] '>
+                            Keywords
+                        </Typography>
+
+
+                    </DialogHeader>
+                    <DialogBody className=''>
+                        <div className=' flex  max-h-[30rem] overflow-y-scroll flex-col gap-4 justify-start px-10 '>
+                            <div className=' flex justify-between items-end'>
+                                <Typography className=" text-[#a2a2a2] text-md font-normal">
+                                    Job description
+                                </Typography>
+                                <Typography className=" text-[#2dce89] text-xs font-normal cursor-pointer">
+                                    Example
+                                </Typography>
+                            </div>
+
+                            <div className=' flex items-center gap-2 w-full '>
+                                <textarea placeholder="Copy and past Job Description here to generate keywords " value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} className=' p-1 text-sm  min-h-[8rem] overflow-y-auto   w-full transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                            </div>
+
+                            <div className=' gap-7 flex flex-wrap'>
+                                {
+                                    keywords.map((item, index) => <div className=' cursor-pointer hover:bg-[#2dce8893] hover:border-none hover:text-white transition-all duration-500 py-1 px-3 border-black border text-black  rounded-lg' >{item}</div>)
+                                }
+                            </div>
+
+                        </div>
+                    </DialogBody>
+                    <DialogFooter className=' gap-2'>
+
+                        <Button variant="gradient" color="black" onClick={() => setKeyOpen(false)}>
+                            <span>{'Close'}</span>
+                        </Button>
+
+                        <Button variant="gradient" color="green" onClick={extractKeywords}>
+                            <span>Generate</span>
                         </Button>
 
                     </DialogFooter>
