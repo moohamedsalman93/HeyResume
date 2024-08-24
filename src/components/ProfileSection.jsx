@@ -15,7 +15,7 @@ function ProfileSection({ exampleData, setExampleData }) {
   };
 
   return (
-    <div className=' w-full h-full p-10 flex flex-col gap-10'>
+    <div className=' w-full h-full md:p-10 flex flex-col gap-10'>
 
       <Input
         variant="static"

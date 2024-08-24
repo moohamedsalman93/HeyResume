@@ -89,10 +89,10 @@ function WorkSection({ exampleData, setExampleData }) {
   }
 
   return (
-    <div className=' w-full h-full py-6 px-2 flex flex-col gap-4 '>
+    <div className=' w-full h-full py-6 md:px-2 flex flex-col gap-4 '>
 
       {Array(noofContent).fill().map((_, i) => (
-        <div key={i} className={` grid grid-cols-2 gap-10  p-4 border rounded-md  py-4 bg-white shadow-lg`}>
+        <div key={i} className={` flex flex-col md:grid md:grid-cols-2 gap-10  md:p-4 p-2 border rounded-md  py-4 bg-white shadow-lg`}>
 
           <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
             <Typography
@@ -151,14 +151,14 @@ function WorkSection({ exampleData, setExampleData }) {
             </div>
           </div>
 
-          <div className=' mb-4 flex flex-col gap-4 col-span-2 w-[30rem]'>
+          <div className=' mb-4 flex flex-col gap-4 col-span-2 md:w-[30rem]'>
             <Typography className=" text-[#a2a2a2] text-sm font-normal">
               Highlights
             </Typography>
             {exampleData.work[i]?.highlights?.map((item, index) =>
               <div key={index} className=' flex items-center gap-2 w-full '>
-                <textarea value={item} onChange={handleTextareaChange(i, index)} className=' p-1 text-sm min-h-[4rem] overflow-hidden  min-w-[29rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
-                <div className=' flex gap-2'>
+                <textarea value={item} onChange={handleTextareaChange(i, index)} className=' p-1 text-sm min-h-[4rem] overflow-hidden w-full  md:min-w-[29rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                <div className=' flex gap-2 w-12'>
 
                   {exampleData.work[i]?.highlights.length !== 1 &&
                     <MinusIcon onClick={() => handleRemoveHighlights(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-blue-gray-700 border hover:border-red-500 hover:text-red-500 rounded-full' />

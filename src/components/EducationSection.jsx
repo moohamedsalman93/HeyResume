@@ -50,11 +50,11 @@ function EducationSection({ exampleData, setExampleData }) {
     }
 
     return (
-        <div className=' w-full h-full p-6 flex flex-col gap-4'>
+        <div className=' w-full h-fit md:p-6  flex flex-col gap-4'>
             {Array(noofContent).fill().map((_, i) => (
-                <div key={i} className={`grid grid-cols-2 gap-10  p-4 border rounded-md place-items-center  py-4 bg-white shadow-md relative w-full`}>
+                <div key={i} className={`  md:grid flex flex-col  md:grid-cols-2 gap-10  p-4 border rounded-md place-items-center  py-4 bg-white shadow-md relative w-full`}>
 
-                    <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
+                    <div className=' h-10 w-full border-b flex justify-between items-center md:col-span-2'>
                         <Typography
                             variant="h6"
                             className='text-blue-gray-700'
