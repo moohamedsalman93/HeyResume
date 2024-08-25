@@ -49,7 +49,7 @@ const workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.
 pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
 
 
-function ResumePage() {
+function ResumePage({ isLoading, setIsLoading }) {
     const [userDetails, setUserDetails] = useState({
         uuid: "",
         name: "",
@@ -77,7 +77,7 @@ function ResumePage() {
     const [imagePosition, setImagePosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
     const [open, setOpen] = useState(false);
     const [historyData, setHistoryData] = useState([])
-    const [isLoading, setIsLoading] = useState(false);
+
     const [isLoadingHistory, setIsLoadingHistory] = useState(true);
     const [aiOpen, setAiOpen] = useState(false)
     const [keyOpen, setKeyOpen] = useState(false)
@@ -94,61 +94,13 @@ function ResumePage() {
     const handleOpenHamburger = () => setOpenHamburger((cur) => !cur);
 
 
-
-    const handleOpen = () => {
-        setOpen(!open);
-        setIsLoadingHistory(true)
-        const fetchData = async () => {
-            const { data, error } = await supabase.from('user_details').select('*').eq('uuid', userDetails?.uuid);
-            if (error) {
-                console.error('Error fetching data:', error);
-            } else {
-                setHistoryData(data);
-            }
-            setIsLoadingHistory(false)
-        }
-
-        fetchData();
-    }
-
+    
     const techKeywords = [
         'javascript', 'reactjs', 'react', 'nodejs', 'node', 'html', 'css',
         'firebase', 'mongodb', 'express', 'angular', 'vue', 'typescript', 'python',
         'java', 'flutter', 'dart', 'kotlin', 'swift', 'ios', 'android', 'aws',
         'azure', 'docker', 'kubernetes', 'graphql'
     ];
-
-    const extractKeywords = () => {
-        let doc = nlp(jobDescription);
-
-        // Extract nouns and verbs
-        let skills = doc.nouns().out('array');
-        let actions = doc.verbs().out('array');
-
-        // Combine skills and actions, convert to lowercase
-        let keywordList = [...skills, ...actions].map(word => word.toLowerCase());
-
-        // Filter out unwanted characters like "-"
-        keywordList = keywordList.map(word => word.replace(/[^a-zA-Z0-9\s]/g, ''));
-
-        // Remove stop words
-        keywordList = removeStopwords(keywordList);
-
-        // Prioritize tech-related keywords
-        let prioritizedKeywords = [];
-        techKeywords.forEach(tech => {
-            if (keywordList.includes(tech)) {
-                prioritizedKeywords.push(tech);
-            }
-        });
-
-        // Add remaining keywords that are not in the tech priority list
-        let remainingKeywords = keywordList.filter(word => !prioritizedKeywords.includes(word));
-
-        // Combine prioritized and remaining keywords, remove duplicates
-        let finalKeywords = [...new Set([...prioritizedKeywords, ...remainingKeywords])];
-        setKeywords(finalKeywords);
-    };
 
     const preData = {
         "selectedTemplate": 1,
@@ -194,22 +146,25 @@ function ResumePage() {
     ];
 
 
-    useEffect(() => {
-        const storedData = localStorage.getItem('Data');
-        if (storedData && exampleData != null) {
-            localStorage.setItem('Data', JSON.stringify(exampleData));
-        }
-        else if (storedData && exampleData == null) {
-            setExampleData(JSON.parse(storedData))
-        }
-        else {
-            localStorage.setItem('Data', JSON.stringify(preData));
-            setExampleData(preData)
+    //#region open history with data fetch
+    const handleOpen = () => {
+        setOpen(!open);
+        setIsLoadingHistory(true)
+        const fetchData = async () => {
+            const { data, error } = await supabase.from('user_details').select('*').eq('uuid', userDetails?.uuid);
+            if (error) {
+                console.error('Error fetching data:', error);
+            } else {
+                setHistoryData(data);
+            }
+            setIsLoadingHistory(false)
         }
 
-    }, [exampleData])
+        fetchData();
+    }
+    //#endregion
 
-
+    //#region view big image
     const handleImageClick = (imageUrl, event) => {
         const imgRect = event.target.getBoundingClientRect();
         setImagePosition({
@@ -229,12 +184,15 @@ function ResumePage() {
             transition: { duration: 0.5 },
         });
     };
+    //#endregion
 
-
+    //#region pdf page counter
     function onDocumentLoadSuccess({ numPages }) {
         setNumPages(numPages);
     }
+    //#endregion
 
+    //#region save
     const generatePDF = async () => {
         setIsLoading(true)
         try {
@@ -248,6 +206,7 @@ function ResumePage() {
         }
 
     };
+    //#endregion
 
     //#region dark mode
     React.useEffect(() => {
@@ -259,13 +218,16 @@ function ResumePage() {
     }, [isDark]);
     //#endregion
 
+    //#region edit from history
     const handleEdit = () => {
         setConfirmPopup(-1)
         setOpen(false)
         // localStorage.setItem('Data', JSON.stringify(historyData[confirmPopup]?.content));
         setExampleData(historyData[confirmPopup]?.content)
     }
+    //#endregion
 
+    //#region download pdf from history
     const generateAndDownload = async (index) => {
         const { texDoc, opts } = getTemplateData(JSON.parse(historyData[index]?.content));
         const pdfUrl = await latex(texDoc, opts);
@@ -280,8 +242,9 @@ function ResumePage() {
             console.log('No PDF URL available');
         }
     }
+    //#endregion
 
-
+    //#region pdf zoom control
     const zoomIn = () => {
         setScale(prevScale => Math.min(prevScale + 0.1, 3)); // Increase scale, max 3x 
         console.log(scale)
@@ -290,8 +253,9 @@ function ResumePage() {
     const zoomOut = () => {
         setScale(prevScale => Math.max(prevScale - 0.1, 0.5)); // Decrease scale, min 0.5x zoom
     };
+    //#endregion
 
-
+    //#region change pdf page
     const next = () => {
         if (pageNumber === numPages) return;
 
@@ -303,7 +267,9 @@ function ResumePage() {
 
         setPageNumber(pageNumber - 1);
     };
+    //#endregion
 
+    //#region download pdf
     const handleDownload = async () => {
         if (pdfUrl) {
 
@@ -337,11 +303,15 @@ function ResumePage() {
             console.log('No PDF URL available');
         }
     };
+    //#endregion
 
+    //#region close big image
     const closeImage = () => {
         setOpenImage('');
     };
+    //#endregion
 
+    //#region change completed page
     const hanldeFarward = () => {
         const getIndex = contentPages.indexOf(selectedPage)
         if (getIndex < contentPages.length - 1) {
@@ -356,7 +326,92 @@ function ResumePage() {
             generatePDF()
         }
     }
+    //#endregion
 
+    //#region keywords 
+    const handleAddkeywordInSkill = (index2, item) => {
+        setExampleData(prevState => {
+            const updatedskills = [...prevState.skills];
+            updatedskills[index2]?.keywords?.push(item);
+            return {
+                ...prevState,
+                skills: updatedskills,
+            };
+        });
+
+        setOpenSkillSelector(-1)
+    }
+
+    const extractKeywords = () => {
+        let doc = nlp(jobDescription);
+
+        // Extract nouns and verbs
+        let skills = doc.nouns().out('array');
+        let actions = doc.verbs().out('array');
+
+        // Combine skills and actions, convert to lowercase
+        let keywordList = [...skills, ...actions].map(word => word.toLowerCase());
+
+        // Filter out unwanted characters like "-"
+        keywordList = keywordList.map(word => word.replace(/[^a-zA-Z0-9\s]/g, ''));
+
+        // Remove stop words
+        keywordList = removeStopwords(keywordList);
+
+        // Prioritize tech-related keywords
+        let prioritizedKeywords = [];
+        techKeywords.forEach(tech => {
+            if (keywordList.includes(tech)) {
+                prioritizedKeywords.push(tech);
+            }
+        });
+
+        // Add remaining keywords that are not in the tech priority list
+        let remainingKeywords = keywordList.filter(word => !prioritizedKeywords.includes(word));
+
+        // Combine prioritized and remaining keywords, remove duplicates
+        let finalKeywords = [...new Set([...prioritizedKeywords, ...remainingKeywords])];
+        setKeywords(finalKeywords);
+    };
+
+    const handleRemoveKeyword = (keyword) => {
+        setExampleData(prevState => {
+            const updatedSkills = prevState.skills.map(skill => {
+                return {
+                    ...skill,
+                    keywords: skill.keywords.filter(k => k !== keyword) // Remove the keyword from the skill
+                };
+            });
+            return {
+                ...prevState,
+                skills: updatedSkills,
+            };
+        });
+    };
+
+    const handleClickOutside = (event) => {
+        if (AddInPopRef.current && !AddInPopRef.current.contains(event.target)) {
+            setOpenSkillSelector(-1);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    //#endregion
+
+    //#region logout
+    const handleLogout = () => {
+        supabase.auth.signOut();
+        navigate('/');
+    }
+    //#endregion
+
+    //#region check session useEffect
     useEffect(() => {
         const checkSession = async () => {
             const { data: { user }, error } = await supabase.auth.getUser();
@@ -387,133 +442,110 @@ function ResumePage() {
         };
         checkSession();
     }, []);
+    //#endregion
 
-
-    const handleLogout = () => {
-        supabase.auth.signOut();
-        navigate('/');
-    }
-
-    const handleAddkeywordInSkill = (index2, item) => {
-        setExampleData(prevState => {
-            const updatedskills = [...prevState.skills];
-            updatedskills[index2]?.keywords?.push(item);
-            return {
-                ...prevState,
-                skills: updatedskills,
-            };
-        });
-
-        setOpenSkillSelector(-1)
-    }
-
-
-    const handleClickOutside = (event) => {
-        if (AddInPopRef.current && !AddInPopRef.current.contains(event.target)) {
-            setOpenSkillSelector(-1);
-        }
-    };
-
+    //#region pdf resize useEffect
     useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+        const handleResize = () => {
+            setScale(window.innerWidth < 960 ? 0.5 : 0.8); // Set scale based on screen size
         };
-    }, []);
 
-    useEffect(() => {
-        window.addEventListener(
-            "resize",
-            () => window.innerWidth >= 960 && setScale(0.8)
-        );
+        handleResize(); // Initial check
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize); // Cleanup listener
     }, [])
+    //#endregion
 
-    const handleRemoveKeyword = (keyword) => {
-        setExampleData(prevState => {
-            const updatedSkills = prevState.skills.map(skill => {
-                return {
-                    ...skill,
-                    keywords: skill.keywords.filter(k => k !== keyword) // Remove the keyword from the skill
-                };
-            });
-            return {
-                ...prevState,
-                skills: updatedSkills,
-            };
-        });
-    };
+
+    //#region sync data with local storage
+    useEffect(() => {
+        const storedData = localStorage.getItem('Data');
+        if (storedData && exampleData != null) {
+            localStorage.setItem('Data', JSON.stringify(exampleData));
+        }
+        else if (storedData && exampleData == null) {
+            setExampleData(JSON.parse(storedData))
+        }
+        else {
+            localStorage.setItem('Data', JSON.stringify(preData));
+            setExampleData(preData)
+        }
+
+    }, [exampleData])
+    //#endregion
+
 
     return (
         <div className=' w-full h-screen overflow-hidden relative flex flex-col justify-start items-start'>
 
-            <Navbar shadow={false} fullWidth className="border-0 !h-[7%]">
-                <div className="container mx-auto flex items-center justify-between h-full">
-                    <div className=' flex items-center divide-x h-full space-x-2'>
-                        <Typography color="blue-gray" className="md:text-2xl font-bold">
-                            <span className=' text-[#2dce89]'>Hey </span>
-                            Resume !
+
+            <div className=" w-full flex items-center justify-between h-[8%] shadow-md bg-white border p-2 px-3">
+                <div className=' flex items-center divide-x h-full space-x-2'>
+                    <Typography color="blue-gray" className="md:text-2xl font-bold">
+                        <span className=' text-[#2dce89]'>Hey </span>
+                        Resume !
+                    </Typography>
+
+                    <div className=' w-[1.5px] h-full bg-blue-gray-300'>
+
+                    </div>
+
+                    <div className=' bg-blue-50 rounded-full px-3 py-1 hidden md:flex'>
+                        <Typography className="text-sm font-light text-blue-300 cursor-default">
+                            Standard
                         </Typography>
-
-                        <div className=' w-[1.5px] h-full bg-blue-gray-300'>
-
-                        </div>
-
-                        <div className=' bg-blue-50 rounded-full px-3 py-1 hidden md:flex'>
-                            <Typography className="text-sm font-light text-blue-300 cursor-default">
-                                Standard
-                            </Typography>
-                        </div>
                     </div>
-
-
-                    <div className='hidden md:flex'>
-                        <Popover placement="bottom-end">
-                            <PopoverHandler>
-                                <div className=' flex items-center gap-2 cursor-pointer'>
-                                    <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full overflow-clip'>
-                                        <img src={userDetails?.profileImage} alt="" className=' w-full h-full object-cover' />
-                                    </div>
-                                    <div className=' md:flex flex-col w-[10rem] hidden'>
-                                        <Typography className='text-blue-gray-700  w-[10rem] overflow-hidden text-ellipsis' variant='h6'>{userDetails?.name}</Typography>
-                                        <Typography className='text-blue-gray-700 w-[10rem] overflow-hidden text-ellipsis' variant='small'>{userDetails?.email}</Typography>
-                                    </div>
-                                </div>
-
-                            </PopoverHandler>
-                            <PopoverContent className="md:w-[12rem] divide-y-2 flex flex-col pl-5">
-
-
-                                <div className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-blue-gray-900 cursor-pointer transition-colors duration-700'>
-                                    <Typography >
-                                        Order
-                                    </Typography>
-                                    <ShoppingBagIcon className=' h-4 w-4' />
-                                </div>
-                                <div onClick={() => handleLogout()} className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-red-500 cursor-pointer  transition-colors duration-700'>
-                                    <Typography  >
-                                        Log out
-                                    </Typography>
-                                    <ArrowRightStartOnRectangleIcon className=' h-4 w-4' />
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-
-                    <IconButton
-                        variant="text"
-                        color="gray"
-                        onClick={handleOpenHamburger}
-                        className="ml-auto inline-block lg:hidden"
-                    >
-                        <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full overflow-clip'>
-                            <img src={userDetails?.profileImage} alt="" className=' w-full h-full object-cover' />
-                        </div>
-                    </IconButton>
-
-
                 </div>
 
-            </Navbar>
+
+                <div className='hidden md:flex'>
+                    <Popover placement="bottom-end">
+                        <PopoverHandler>
+                            <div className=' flex items-center gap-2 cursor-pointer'>
+                                <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full overflow-clip'>
+                                    <img src={userDetails?.profileImage} alt="" className=' w-full h-full object-cover' />
+                                </div>
+                                <div className=' md:flex flex-col w-[10rem] hidden'>
+                                    <Typography className='text-blue-gray-700  w-[10rem] overflow-hidden text-ellipsis' variant='h6'>{userDetails?.name}</Typography>
+                                    <Typography className='text-blue-gray-700 w-[10rem] overflow-hidden text-ellipsis' variant='small'>{userDetails?.email}</Typography>
+                                </div>
+                            </div>
+
+                        </PopoverHandler>
+                        <PopoverContent className="md:w-[12rem] divide-y-2 flex flex-col pl-5">
+
+
+                            <div className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-blue-gray-900 cursor-pointer transition-colors duration-700'>
+                                <Typography >
+                                    Order
+                                </Typography>
+                                <ShoppingBagIcon className=' h-4 w-4' />
+                            </div>
+                            <div onClick={() => handleLogout()} className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-red-500 cursor-pointer  transition-colors duration-700'>
+                                <Typography  >
+                                    Log out
+                                </Typography>
+                                <ArrowRightStartOnRectangleIcon className=' h-4 w-4' />
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                </div>
+
+                <IconButton
+                    variant="text"
+                    color="gray"
+                    onClick={handleOpenHamburger}
+                    className="ml-auto inline-block lg:hidden"
+                >
+                    <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full overflow-clip'>
+                        <img src={userDetails?.profileImage} alt="" className=' w-full h-full object-cover' />
+                    </div>
+                </IconButton>
+
+
+            </div>
+
+
 
             <div className=' w-full h-[93%] bg-[#2dce89] bg-opacity-5 p-2 md:flex hidden dark:bg-[#14171d] '>
 
@@ -982,9 +1014,9 @@ function ResumePage() {
 
             </div>
 
-            <div className=' flex flex-col gap-2 md:hidden w-full justify-start items-start h-full '>
+            <div className=' flex flex-col gap-2 md:hidden w-full justify-start items-start h-[92%] '>
 
-                <Tabs value={activeTab} className=' py-2 min-h-[4rem]  w-fit'>
+                <Tabs value={activeTab} className=' py-2 min-h-[7%]  w-fit'>
                     <TabsHeader className=' z-0 border   bg-white' indicatorProps={{
                         className: "bg-black text-white",
                     }}>
@@ -1001,9 +1033,9 @@ function ResumePage() {
 
                 {
                     activeTab == "section" ? (
-                        <div className='  w-full h-full flex flex-col  justify-start items-start relative pb-[9rem]'>
+                        <div className='  w-full h-[93%]  flex flex-col  justify-start items-start relative'>
 
-                            <div className=' h-12 w-full border-b-2 flex items-center justify-between px-4'>
+                            <div className=' h-[7%] w-full border-b-2 flex items-center justify-between px-4'>
                                 <Typography
                                     variant="h6"
                                     className='text-blue-gray-700'
@@ -1012,7 +1044,7 @@ function ResumePage() {
                                 </Typography>
                             </div>
 
-                            <div className='h-full overflow-y-auto w-full p-4 py-10'>
+                            <div className=' min-h-[81%] max-h-[81%] overflow-y-auto w-full p-4 '>
                                 {selectedPage === "Templates" && <TemplateSection exampleData={exampleData} setExampleData={setExampleData} handleImageClick={handleImageClick} />}
                                 {selectedPage === "Profile" && <ProfileSection exampleData={exampleData} setExampleData={setExampleData} />}
                                 {selectedPage === "Education" && <EducationSection exampleData={exampleData} setExampleData={setExampleData} />}
@@ -1024,7 +1056,7 @@ function ResumePage() {
                             </div>
 
 
-                            <div className=' h-12 w-full border-t-2 flex gap-4 items-center justify-between bg-white px-4'>
+                            <div className=' h-[12%]  w-full border-t-2 flex gap-4 items-center justify-between  px-4'>
 
                                 <div className=' w-full gap-4 flex items-end select-none'>
                                     <ChevronLeftIcon onClick={hanldeBack} className=' cursor-pointer hover:border h-8 w-8 hover:shadow-xl rounded-md' />

@@ -74,39 +74,6 @@ function LandingPage() {
 
     //#endregion
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('token');
-
-    //     if (token) {
-    //         try {
-    //             const decryptedToken = JSON.parse(atob(token.split('.')[1]));
-    //             const tokenExpiry = decryptedToken.exp;
-    //             const userRole = decryptedToken.role;
-
-    //             const isTokenExpired = new Date(tokenExpiry * 1000) < new Date();
-
-    //             if (!isTokenExpired) {
-
-    //                 if (userRole === 'admin') {
-    //                     navigate('/admin-page');
-    //                 } else {
-    //                     navigate('/user-page');
-    //                 }
-    //             } else {
-
-    //                 navigate('/login');
-    //                 localStorage.clear()
-    //             }
-    //         } catch (error) {
-    //             console.error('Invalid token:', error);
-
-    //             navigate('/login');
-    //         }
-    //     } else {
-
-    //     }
-    // }, []);
-
     //#region Card Data
     const cardData = [
         {
@@ -154,7 +121,7 @@ function LandingPage() {
     ];
     //#endregion
     return (
-        <div className=' overflow-hidden '>
+        <div className=' overflow-y-auto h-full '>
             <Navbar shadow={false} fullWidth className="border-0">
                 <div className="container mx-auto flex items-center justify-between">
                     <Typography color="blue-gray" className="text-2xl font-bold">
@@ -208,9 +175,9 @@ function LandingPage() {
                     </div>
                 </Collapse>
             </Navbar>
-            <div className="bg-white p-4 md:p-8 grid mt-4 md:mt-16 min-h-[82vh] w-full lg:h-[54rem] md:h-[34rem] relative place-items-stretch bg-[url('/image/bg-hero-17.svg')] bg-center bg-contain bg-no-repeat gap-20">
+            <div className="bg-white p-4 md:p-8 grid mt-4 md:mt-16  w-full l relative place-items-stretch bg-[url('/image/bg-hero-17.svg')] bg-center bg-contain bg-no-repeat gap-20">
 
-                <div className="container mx-auto md:px-4 text-center">
+                <motion.div initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:1}} className="container mx-auto md:px-4 text-center">
                     <Typography className="inline-flex text-xs rounded-lg border-[1.5px] border-blue-gray-50 bg-white py-1 lg:px-4 px-1 font-medium text-primary">
                         Trusted by 100,000+ Professionals & Students. 🚀
                     </Typography>
@@ -245,9 +212,10 @@ function LandingPage() {
                             ATS-friendly format!
                         </Typography>
                     </div>
-                </div>
+                </motion.div>
 
                 <div className="w-full flex flex-col md:flex-row justify-evenly items-center">
+
                     <div className="max-w-xl">
                         <i className="fa-solid fa-clipboard-check text-4xl text-gray-900" />
                         <Typography className="mt-6" variant="h4">
@@ -263,18 +231,18 @@ function LandingPage() {
 
 
 
-                    <div className=' md:w-[30rem] md:h-[30rem]  '>
+                    <motion.div initial={{opacity:0,x:50}} whileInView={{opacity:1,x:0}} transition={{duration:1}} className=' md:w-[30rem] md:h-[30rem]  '>
                         <img src={LandingPageImg} alt="" />
-                    </div>
+                    </motion.div>
 
                 </div>
 
                 <div className="container mx-auto my-auto flex flex-col-reverse md:flex-row justify-evenly items-center">
 
                     <div className=' w-full h-[30rem] md:w-[30rem] md:h-[30rem] relative overflow-clip flex justify-end items-end'>
-                        <img src={`https://latexresu.me/static/1.png`} alt="" className=' inset-x-2 absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
-                        <img src={`https://latexresu.me/static/2.png`} alt="" className=' inset-x-32 inset-y-16 absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
-                        <img src={`https://latexresu.me/static/3.png`} alt="" className=' inset-x-56 inset-y-4  absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
+                        <motion.img initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:1,delay:1}}  src={`https://latexresu.me/static/1.png`} alt="" className=' inset-x-2 absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
+                        <motion.img initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:1,delay:1.2}} src={`https://latexresu.me/static/2.png`} alt="" className=' inset-x-32 inset-y-16 absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
+                        <motion.img initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:1,delay:1.4}} src={`https://latexresu.me/static/3.png`} alt="" className=' inset-x-56 inset-y-4  absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
 
                     </div>
 
@@ -295,7 +263,7 @@ function LandingPage() {
 
                 </div>
 
-                <div className=' h-fit md:p-2 '>
+                <div className=' h-fit md:p-2  '>
                     <Tabs value="ATS Keywords" >
                         <TabsHeader className='md:w-[50rem] mx-auto w-full'>
                             {cardData.map(({ title, icon }) => (
@@ -397,7 +365,7 @@ function LandingPage() {
                     </div>
                 </div> */}
 
-                <div className="px-8 md:py-14 border-t border-[#2dce89]">
+                <div className="px-8 md:py-14 border-t border-[#2dce89] ">
                     <div className="container mx-auto">
                         <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
                             <Typography className="!text-sm font-medium text-gray-500 lg:text-left text-center">

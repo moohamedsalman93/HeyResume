@@ -84,7 +84,7 @@ function ProjectSection({ exampleData, setExampleData }) {
     <div className=' w-full h-full py-6 px-2 flex flex-col gap-4 '>
 
       {Array(noofContent).fill().map((_, i) => (
-        <div key={i} className={` grid grid-cols-2 gap-10  p-4 border rounded-md  py-4 bg-white shadow-lg`}>
+        <div key={i} className={` flex flex-col md:grid grid-cols-2 gap-10  p-4 border rounded-md  py-4 bg-white shadow-lg`}>
 
           <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
             <Typography

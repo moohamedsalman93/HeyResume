@@ -115,7 +115,13 @@ function EducationSection({ exampleData, setExampleData }) {
                         </div>
                     </div>
 
-
+                    <div className=' col-span-2 w-full flex justify-center items-center'>
+                        {noofContent == i + 1 &&
+                            < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddEducation}>
+                                Add another
+                            </Button>
+                        }
+                    </div>
 
                 </div>
             ))
