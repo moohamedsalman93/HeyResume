@@ -42,6 +42,7 @@ import Lottie from "lottie-react";
 import loading from '../../assets/loading.json'
 import nlp from 'compromise';
 import { removeStopwords } from 'stopword';
+import { sanitizeData } from '../../components/FilterText';
 
 
 
@@ -94,7 +95,7 @@ function ResumePage({ isLoading, setIsLoading }) {
     const handleOpenHamburger = () => setOpenHamburger((cur) => !cur);
 
 
-    
+
     const techKeywords = [
         'javascript', 'reactjs', 'react', 'nodejs', 'node', 'html', 'css',
         'firebase', 'mongodb', 'express', 'angular', 'vue', 'typescript', 'python',
@@ -192,11 +193,13 @@ function ResumePage({ isLoading, setIsLoading }) {
     }
     //#endregion
 
+
     //#region save
     const generatePDF = async () => {
         setIsLoading(true)
         try {
-            const { texDoc, opts } = getTemplateData(exampleData);
+            const sanitizedData = sanitizeData(exampleData);
+            const { texDoc, opts } = getTemplateData(sanitizedData);
             const pdfUrl = await latex(texDoc, opts);
             setPdfUrl(pdfUrl);
             setIsLoading(false)
