@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import getTemplateData from "./lib/getTemplateData";
 import latex from "./lib/latext";
 import './App.css'
+import PrivacyPolicies from "./pages/PrivacyPolicies";
+
 
 
 function App() {
@@ -46,6 +48,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/resume" element={<ResumePage isLoading={isLoading} setIsLoading={setIsLoading} />} />
+          <Route path="/privacy-policies" element={<PrivacyPolicies />} />
         </Routes>
       </BrowserRouter>
     </div>

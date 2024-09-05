@@ -125,10 +125,11 @@ function LandingPage() {
             <Navbar shadow={false} fullWidth className="border-0">
                 <div className="container mx-auto flex items-center justify-between">
                     <Typography color="blue-gray" className="text-2xl font-bold">
-                        <span className=' text-[#2dce89]'>Hey </span>
+                        <span className=' text-[#2dce89] font-title'>Hey </span>
                         Resume !
                     </Typography>
 
+                    
                     <div className="hidden items-center gap-4 lg:flex">
 
                         <div onClick={() => signInWithGoogle()} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">

@@ -193,7 +193,6 @@ function ResumePage({ isLoading, setIsLoading }) {
     }
     //#endregion
 
-
     //#region save
     const generatePDF = async () => {
         setIsLoading(true)
@@ -226,7 +225,7 @@ function ResumePage({ isLoading, setIsLoading }) {
         setConfirmPopup(-1)
         setOpen(false)
         // localStorage.setItem('Data', JSON.stringify(historyData[confirmPopup]?.content));
-        setExampleData(historyData[confirmPopup]?.content)
+        setExampleData(JSON.parse(historyData[confirmPopup]?.content))
     }
     //#endregion
 
@@ -319,6 +318,9 @@ function ResumePage({ isLoading, setIsLoading }) {
         const getIndex = contentPages.indexOf(selectedPage)
         if (getIndex < contentPages.length - 1) {
             setSelectedPage(contentPages[getIndex + 1])
+        }
+        if (getIndex == contentPages.length - 1) {
+            setActiveTab("preview")
         }
     }
 
@@ -458,7 +460,6 @@ function ResumePage({ isLoading, setIsLoading }) {
         return () => window.removeEventListener("resize", handleResize); // Cleanup listener
     }, [])
     //#endregion
-
 
     //#region sync data with local storage
     useEffect(() => {
@@ -757,17 +758,9 @@ function ResumePage({ isLoading, setIsLoading }) {
                                     className='overflow-hidden text-ellipsis items-center text-blue-gray-700'
                                     variant='h6'
                                 >
-                                    Click save button to generate pdf
+                                    Click above save button to generate pdf
                                 </Typography>
-                                <div className=' flex items-center gap-2 py-[0.6rem] px-2 '>
-                                    <Typography
-                                        className='overflow-hidden text-ellipsis items-center text-black'
-                                        variant='small'
-                                    >
-                                        Save
-                                    </Typography>
-                                    <DocumentTextIcon strokeWidth={2} className="h-4 w-4 text-black transition-all duration-500 " />
-                                </div>
+
                             </div>
                                 :
                                 <Document file={pdfUrl || "/blank.pdf"} onLoadSuccess={onDocumentLoadSuccess} >
@@ -1158,17 +1151,9 @@ function ResumePage({ isLoading, setIsLoading }) {
                                             className='overflow-hidden text-ellipsis items-center text-blue-gray-700'
                                             variant='h6'
                                         >
-                                            Click save button to generate pdf
+                                            Click above save button to generate pdf
                                         </Typography>
-                                        <div className=' flex items-center gap-2 py-[0.6rem] px-2 '>
-                                            <Typography
-                                                className='overflow-hidden text-ellipsis items-center text-black'
-                                                variant='small'
-                                            >
-                                                Save
-                                            </Typography>
-                                            <DocumentTextIcon strokeWidth={2} className="h-4 w-4 text-black transition-all duration-500 " />
-                                        </div>
+
                                     </div>
                                         :
                                         <Document file={pdfUrl || "/blank.pdf"} onLoadSuccess={onDocumentLoadSuccess} >
@@ -1247,16 +1232,19 @@ function ResumePage({ isLoading, setIsLoading }) {
                                 y: '-50%'
                             }}
 
-                            className="  flex justify-center items-center relative overflow-hidden py-4 h-full"
+                            className="  flex justify-center items-center relative overflow-hidden  h-full"
                             style={{ position: 'absolute' }}
                         >
-                            <motion.img initial={{ borderRadius: 999 }} whileInView={{ borderRadius: 10 }} src={openImage} alt="Selected" className="w-full  h-[90%] object-cover" />
-                            <button
-                                onClick={closeImage}
-                                className="absolute top-[7%] right-2 text-white bg-black/50 rounded-full p-1"
-                            >
-                                ✕
-                            </button>
+                            <div className='relative flex justify-center items-center  overflow-hidden w-fit py-4 px-2'>
+                                <motion.img initial={{ borderRadius: 999 }} whileInView={{ borderRadius: 10 }} src={openImage} alt="Selected" className="md:w-full w-[65%] h-[70%]  md:h-[90%] object-cover" />
+                                <button
+                                    onClick={closeImage}
+                                    className="absolute  top-2 right-2 text-white bg-black/50 rounded-full p-1"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+
                         </motion.div>
                     </motion.div>
                 )}

@@ -3,3 +3,4 @@ export default function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-GB', options); // 'en-GB' is used for formatting like "19 Aug, 2024"
 };
+

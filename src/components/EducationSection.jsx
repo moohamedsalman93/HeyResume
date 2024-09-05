@@ -90,7 +90,7 @@ function EducationSection({ exampleData, setExampleData }) {
                     <Input
                         variant="static"
                         label="Major"
-                        placeholder="123-456-7890"
+                        placeholder="Computer Science"
                         value={exampleData?.education[i]?.area}
                         onChange={handleInputChange('area', i)}
                     />

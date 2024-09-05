@@ -63,6 +63,9 @@ export default withMT({
           },
         },
       },
+      fontFamily:{
+        title:["Nerko+One","sans-serif"],
+      }
     },
   },
   plugins: [addVariablesForColors],
