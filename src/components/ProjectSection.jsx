@@ -89,7 +89,7 @@ function ProjectSection({ exampleData, setExampleData }) {
           <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
             <Typography
               variant="h6"
-              className='text-blue-gray-700'
+              className='text-[#768499]'
             >
               Project {i + 1}
             </Typography>
@@ -155,7 +155,7 @@ function ProjectSection({ exampleData, setExampleData }) {
                 <div className='flex gap-2'>
 
                   {exampleData.projects[i]?.keywords.length !== 1 &&
-                    <MinusIcon onClick={() => handleRemoveKeywords(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-blue-gray-700 border hover:border-red-500 hover:text-red-500 rounded-full' />
+                    <MinusIcon onClick={() => handleRemoveKeywords(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-[#768499] border hover:border-red-500 hover:text-red-500 rounded-full' />
                   }
                   {exampleData.projects[i]?.keywords.length == index + 1 &&
                     <PlusIcon onClick={() => handleAddKeywords(i)} className='w-6 h-6 cursor-pointer text-green-700 hover:text-green-100 hover:border-green-100 border border-green-700 rounded-full' />

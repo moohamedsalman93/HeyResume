@@ -57,7 +57,7 @@ function EducationSection({ exampleData, setExampleData }) {
                     <div className=' h-10 w-full border-b flex justify-between items-center md:col-span-2'>
                         <Typography
                             variant="h6"
-                            className='text-blue-gray-700'
+                            className='text-[#768499]'
                         >
                             Education {i + 1}
                         </Typography>

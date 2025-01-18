@@ -97,7 +97,7 @@ function WorkSection({ exampleData, setExampleData }) {
           <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
             <Typography
               variant="h6"
-              className='text-blue-gray-700'
+              className='text-[#768499]'
             >
               Experience {i + 1}
             </Typography>
@@ -161,7 +161,7 @@ function WorkSection({ exampleData, setExampleData }) {
                 <div className=' flex gap-2 w-12'>
 
                   {exampleData.work[i]?.highlights.length !== 1 &&
-                    <MinusIcon onClick={() => handleRemoveHighlights(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-blue-gray-700 border hover:border-red-500 hover:text-red-500 rounded-full' />
+                    <MinusIcon onClick={() => handleRemoveHighlights(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-[#768499] border hover:border-red-500 hover:text-red-500 rounded-full' />
                   }
                   {exampleData.work[i]?.highlights.length == index + 1 &&
                     <PlusIcon onClick={() => handleAddHighlights(i)} className='w-6 h-6 cursor-pointer text-green-700 hover:text-green-100 hover:border-green-100 border border-green-700 rounded-full' />

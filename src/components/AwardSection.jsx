@@ -55,7 +55,7 @@ function AwardSection({ exampleData, setExampleData }) {
           <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
             <Typography
               variant="h6"
-              className='text-blue-gray-700'
+              className='text-[#768499]'
             >
               Award and Acheivement {i + 1}
             </Typography>
