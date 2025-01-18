@@ -145,18 +145,6 @@ function LandingPage() {
                             </div>
                         </div>
                     </div>
-                    <IconButton
-                        variant="text"
-                        color="gray"
-                        onClick={handleOpen}
-                        className="ml-auto inline-block lg:hidden"
-                    >
-                        {open ? (
-                            <XMarkIcon strokeWidth={2} className="h-6 w-6" />
-                        ) : (
-                            <Bars3Icon strokeWidth={2} className="h-6 w-6" />
-                        )}
-                    </IconButton>
                 </div>
                 <Collapse open={open}>
                     <div className="container mx-auto mt-3 border-t border-blue-gray-50 px-2 pt-4">
@@ -176,9 +164,9 @@ function LandingPage() {
                     </div>
                 </Collapse>
             </Navbar>
-            <div className="bg-white  p-4 md:p-8 grid mt-4 md:mt-16  w-full l relative place-items-stretch  gap-20">
+            <div className="bg-white pt-24  px-4 md:p-8 grid mt-4 md:mt-16  w-full l relative place-items-stretch  gap-20">
 
-                <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="container mx-auto md:px-4 text-center">
+                <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="container mx-auto md:px-4 text-center ">
                     <Typography className="inline-flex text-xs rounded-lg border-[1.5px] border-blue-gray-50 bg-white py-1 lg:px-4 px-1 font-medium text-primary">
                         Trusted by 100,000+ Professionals & Students. 🚀
                     </Typography>
@@ -201,8 +189,8 @@ function LandingPage() {
                     </Typography>
                     <div className="mt-8  w-full place-items-start md:justify-center">
 
-                        <div onClick={() => signInWithGoogle()} className="w-full  mx-auto px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white  md:w-[10rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
-                            <div className='md:w-[10rem] bg-white absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
+                        <div onClick={() => signInWithGoogle()} className="  mx-auto px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white  w-[10rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
+                            <div className='w-[10rem] bg-white absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
                             <div className=' space-x-1 absolute z-40 font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:text-transparent hover:bg-clip-text duration-700 text-white items-center flex justify-center bg-white h-9 rounded-2xl w-[9.7rem]'>
                                 <p>Build My Resume</p>
                             </div>
@@ -217,7 +205,7 @@ function LandingPage() {
                     </div>
                 </motion.div>
 
-                <div className="w-full flex flex-col md:flex-row justify-evenly items-center">
+                <div className="w-full flex flex-col md:flex-row justify-evenly items-center saturate-[0.6]">
 
                     <div className="max-w-xl">
                         <i className="fa-solid fa-clipboard-check text-4xl text-gray-900" />
@@ -368,7 +356,7 @@ function LandingPage() {
                     </div>
                 </div> */}
 
-                <div className="px-8 md:py-14 border-t">
+                <div className="px-8  pb-9 md:py-14 border-t">
                     <div className="container mx-auto">
                         <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
                             <Typography className="!text-sm font-medium text-[#768499] lg:text-left text-center">
