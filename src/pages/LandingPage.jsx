@@ -9,11 +9,6 @@ import {
     Card,
     Textarea,
     Checkbox,
-    Tabs,
-    TabsHeader,
-    Tab,
-    TabsBody,
-    TabPanel,
     CardBody,
 } from "@material-tailwind/react";
 import {
@@ -30,6 +25,7 @@ import LandingPageImg from '../assets/landingPageImg.png'
 import { supabase } from '../lib/Auth/SupabseAuth';
 import keywordImg from '../assets/keywords.png'
 import historyImg from '../assets/history.png'
+import FeatureScroll from '../components/FeatureScroll';
 
 
 
@@ -254,33 +250,8 @@ function LandingPage() {
 
                 </div>
 
-                <div className=' h-fit md:p-2  '>
-                    <Tabs value="ATS Keywords" >
-                        <TabsHeader className='md:w-[50rem] mx-auto w-full'>
-                            {cardData.map(({ title, icon }) => (
-                                <Tab key={title} value={title}>
-                                    <div className="flex flex-col  md:flex-row items-center justify-between  gap-2 text-sm">
-                                        {React.createElement(icon, { className: "w-3 h-3" })}
-                                        <p>{title}</p>
-                                    </div>
-                                </Tab>
-                            ))}
-                        </TabsHeader>
-                        <TabsBody className=' mt-5 md:p-2'>
-                            {cardData.map(({ title, description, img }) => (
-                                <TabPanel key={title} value={title} className=' flex flex-col md:flex-row  justify-center items-center md:px-[10rem] md:gap-2'>
-                                    <div className='md:w-[70%] md:min-h-[30rem] overflow-clip flex items-center justify-center  rounded-lg border shadow-md'>
-                                        <img src={img} alt="" className=' object-fill' />
-                                    </div>
-
-                                    <div className=' p-4 flex flex-col h-full items-start md:w-[40%] gap-2 justify-center'>
-                                        <Typography variant='h5'>{title}</Typography>
-                                        <Typography>{description}</Typography>
-                                    </div>
-                                </TabPanel>
-                            ))}
-                        </TabsBody>
-                    </Tabs>
+                <div className='w-full'>
+                    <FeatureScroll features={cardData} />
                 </div>
 
 
