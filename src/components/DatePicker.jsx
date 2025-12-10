@@ -50,7 +50,7 @@ function DatePicker({ date, handleInputChange, field, index, title, isDisable })
                 <CalendarDateRangeIcon className=" w-4 h-4 absolute right-2 text-[#475c66]" />
             </div>
             {isPickerOpen ? (
-                <div className=" bg-white w-[12.5rem] h-[14rem] absolute border shadow-md top-[-15rem] rounded-md ">
+                <div className=" bg-white w-[12.5rem] h-[14rem] absolute border shadow-md top-[-14rem] rounded-md z-50 ">
                     <div className=" select-none h-9 border flex items-center justify-center gap-5">
                         <ArrowLeftIcon className=" h-4 w-4 cursor-pointer" onClick={() => setSelectedMonthData(prev => ({
                             ...prev,

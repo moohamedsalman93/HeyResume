@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://heyresume.divcodetech.site/sitemap.xml

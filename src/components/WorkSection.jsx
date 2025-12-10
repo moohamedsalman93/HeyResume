@@ -6,7 +6,7 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
 
 
 function WorkSection({ exampleData, setExampleData }) {
-  const [noofContent, setNoofContent] = useState(1);
+  const [noofContent, setNoofContent] = useState(0);
   const [isPresent, setIsPresent] = useState([])
 
 
@@ -28,13 +28,16 @@ function WorkSection({ exampleData, setExampleData }) {
     });
   };
 
-  const handleTextareaChange = (field, index) => (e) => {
+  //x is outer loop and y is inner loop 
+  //x is exampleData.work[] loop and y is exampleData.work.highlights loop[]
+
+  const handleTextareaChange = (x, y) => (e) => {
     setExampleData(prevState => {
-      const updatedEducation = [...prevState.work];
-      updatedEducation[index][field] = e.target.value; // Update specific field
+      const updatedWork = [...prevState.work];
+      updatedWork[x].highlights[y] = e.target.value;
       return {
         ...prevState,
-        work: updatedEducation,
+        work: updatedWork,
       };
     });
   };
@@ -86,31 +89,27 @@ function WorkSection({ exampleData, setExampleData }) {
   }
 
   return (
-    <div className=' w-full h-full py-6 px-2 flex flex-col gap-4 '>
+    <div className=' w-full h-full py-6 md:px-2 flex flex-col gap-4 '>
 
       {Array(noofContent).fill().map((_, i) => (
-        <div key={i} className={` grid grid-cols-2 gap-10  p-4 border rounded-md  py-4 bg-white shadow-lg`}>
+        <div key={i} className={` flex flex-col md:grid md:grid-cols-2 gap-10  md:p-4 p-2 border rounded-md  py-4 bg-white shadow-lg`}>
 
           <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
             <Typography
               variant="h6"
-              className='text-blue-gray-700'
+              className='text-[#768499]'
             >
               Experience {i + 1}
             </Typography>
 
             <div className=' w-fit flex gap-4 h-full'>
-              {noofContent == i + 1 &&
-                < Button variant="outlined" color='green' className=' h-7 items-center flex' onClick={handleAddEducation}>
-                  add
-                </Button>
-              }
 
-              {noofContent != 1 &&
-                <Button onClick={() => handleRemoveEducation(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
-                  remove
-                </Button>
-              }
+
+
+              <Button onClick={() => handleRemoveEducation(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
+                remove
+              </Button>
+
             </div>
 
           </div>
@@ -139,7 +138,7 @@ function WorkSection({ exampleData, setExampleData }) {
           />
 
 
-          <div className='  flex justify-evenly col-span-2'>
+          <div className='  flex justify-between col-span-2'>
             <DatePicker isDisable={false} key={1} title={"Start Date"} date={exampleData.work[i]?.startDate || 'Jan-2014'} handleInputChange={handleInputChange} field={"startDate"} index={i} />
             <div >
               <DatePicker key={2} isDisable={isPresent[i]} title={"End Date"} date={exampleData.work[i]?.endDate || 'Jan-2014'} handleInputChange={handleInputChange} field={"endDate"} index={i} />
@@ -152,17 +151,17 @@ function WorkSection({ exampleData, setExampleData }) {
             </div>
           </div>
 
-          <div className=' mb-4 flex flex-col gap-4 col-span-2 w-[20rem]'>
+          <div className=' mb-4 flex flex-col gap-4 col-span-2 md:w-[30rem]'>
             <Typography className=" text-[#a2a2a2] text-sm font-normal">
               Highlights
             </Typography>
             {exampleData.work[i]?.highlights?.map((item, index) =>
               <div key={index} className=' flex items-center gap-2 w-full '>
-                <textarea value={item} className=' p-1 text-sm !h-[3rem]  min-w-[19rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
-                <div className=' flex gap-2'>
+                <textarea value={item} onChange={handleTextareaChange(i, index)} className=' p-1 text-sm min-h-[4rem] overflow-hidden w-full  md:min-w-[29rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                <div className=' flex gap-2 w-12'>
 
                   {exampleData.work[i]?.highlights.length !== 1 &&
-                    <MinusIcon onClick={() => handleRemoveHighlights(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-blue-gray-700 border hover:border-red-500 hover:text-red-500 rounded-full' />
+                    <MinusIcon onClick={() => handleRemoveHighlights(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-[#768499] border hover:border-red-500 hover:text-red-500 rounded-full' />
                   }
                   {exampleData.work[i]?.highlights.length == index + 1 &&
                     <PlusIcon onClick={() => handleAddHighlights(i)} className='w-6 h-6 cursor-pointer text-green-700 hover:text-green-100 hover:border-green-100 border border-green-700 rounded-full' />
@@ -173,8 +172,26 @@ function WorkSection({ exampleData, setExampleData }) {
 
             }
           </div>
+
+          <div className=' col-span-2 w-full flex justify-center items-center'>
+            {noofContent == i + 1 &&
+              < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddEducation}>
+                Add another
+              </Button>
+            }
+          </div>
+
         </div>
       ))
+      }
+      {noofContent == 0 &&
+        <div className=' col-span-2 w-full flex justify-center items-center'>
+
+          < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddEducation}>
+            Add Work
+          </Button>
+
+        </div>
       }
     </div >
   )

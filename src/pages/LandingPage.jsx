@@ -7,42 +7,27 @@ import {
     Typography,
     Input,
     Card,
-    CardBody,
     Textarea,
     Checkbox,
+    CardBody,
 } from "@material-tailwind/react";
 import {
-    RectangleStackIcon,
-    UserCircleIcon,
-    CommandLineIcon,
-    Squares2X2Icon,
-    HeartIcon,
     EnvelopeIcon, PhoneIcon,
-    InboxStackIcon
+    InboxStackIcon,
+    KeyIcon,
+    ClockIcon,
+    RocketLaunchIcon
 } from "@heroicons/react/24/solid";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import LandingPageImg from '../assets/landingPageImg.png'
+import { supabase } from '../lib/Auth/SupabseAuth';
+import keywordImg from '../assets/keywords.png'
+import historyImg from '../assets/history.png'
+import FeatureScroll from '../components/FeatureScroll';
 
 
-
-
-function NavItem({ children }) {
-    return (
-        <li>
-            <Typography
-                as="a"
-                href="#"
-                variant="paragraph"
-                color="blue-gray"
-                className="text-blue-gray-700 flex items-center gap-2 font-medium"
-            >
-                {children}
-            </Typography>
-        </li>
-    );
-}
 
 function LandingPage() {
     const [open, setOpen] = useState(false);
@@ -55,54 +40,56 @@ function LandingPage() {
         );
     }, [])
 
+
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('token');
 
-    //     if (token) {
-    //         try {
-    //             const decryptedToken = JSON.parse(atob(token.split('.')[1]));
-    //             const tokenExpiry = decryptedToken.exp;
-    //             const userRole = decryptedToken.role;
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (user) {
+                navigate('/resume');
+            }
+        };
+        checkSession();
+    }, []);
 
-    //             const isTokenExpired = new Date(tokenExpiry * 1000) < new Date();
 
-    //             if (!isTokenExpired) {
+    //#region signin
+    async function signInWithGoogle() {
+        const { user, session, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+        });
 
-    //                 if (userRole === 'admin') {
-    //                     navigate('/admin-page');
-    //                 } else {
-    //                     navigate('/user-page');
-    //                 }
-    //             } else {
+        if (error) {
+            console.error('Error signing in:', error.message);
+        } else {
+            console.log('Signed in as:', user);
+        }
+    }
 
-    //                 navigate('/login');
-    //                 localStorage.clear()
-    //             }
-    //         } catch (error) {
-    //             console.error('Invalid token:', error);
-
-    //             navigate('/login');
-    //         }
-    //     } else {
-
-    //     }
-    // }, []);
+    //#endregion
 
     //#region Card Data
     const cardData = [
         {
+            icon: KeyIcon,
             title: "ATS Keywords",
+            img: keywordImg,
             description: "Generate a new resume with all the relevant keywords in just a few steps. Let us do the heavy lifting while you prepare for interviews."
         },
+
         {
-            title: "Resume Analysis",
-            description: "Don't lose out on an interview due to avoidable mistakes. Analyze your resume and be confident when you apply."
+            icon: RocketLaunchIcon,
+            title: "AI Creation",
+            img: "https://unicorn-cdn.b-cdn.net/c3b88c0e-670e-4705-a02b-2b9cebb01add/resume-analysis.png?width=1440&height=900",
+            description: "Describe yourself, and our AI will automatically generate a tailored resume for you. Simplify your resume creation process."
         },
         {
-            title: "Smart Suggestions",
-            description: "Make your resume stand out by taking inspiration from pre-made bullet points. Search by job title to find the right experience point and quickly add to your resume"
+            icon: ClockIcon,
+            title: "History",
+            img: historyImg,
+            description: "Edit or download your old resumes in PDF format. Keep track of your progress and make improvements over time."
         },
     ]
     //#endregion
@@ -130,65 +117,52 @@ function LandingPage() {
     ];
     //#endregion
     return (
-        <div className=''>
-            <Navbar shadow={false} fullWidth className="border-0">
+        <div className=' overflow-y-auto h-full bg-gradient-to-b from-blue-50 to-white saturate-150 '>
+            <Navbar shadow={false} fullWidth className="border-0 fixed z-50 ">
                 <div className="container mx-auto flex items-center justify-between">
-                    <Typography color="blue-gray" className="text-lg font-bold">
-                        Hey Resume !
+                    <Typography color="blue-gray" className="text-3xl font-bold">
+                        <span className=' bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text'>Hey </span>
+                        Resume !
                     </Typography>
-                    <ul className="ml-10 hidden items-center gap-6 lg:flex">
-                        <NavItem>
-                            <RectangleStackIcon className="h-5 w-5" />
-                            Pricing
-                        </NavItem>
-                        <NavItem>
-                            <UserCircleIcon className="h-5 w-5" />
-                            About Us
-                        </NavItem>
-                    </ul>
+
+
                     <div className="hidden items-center gap-4 lg:flex">
 
-                        <div onClick={()=>navigate('/login')} className="w-full mx-auto px-4 bg-[#212121] md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-lg cursor-pointer">
-                            <div className='md:w-[6rem] bg-green-500 absolute h-12 z-20 rounded-lg inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
-                            <div className=' absolute z-40 text-white'>Sign In</div>
+                        <div onClick={() => signInWithGoogle()} className="w-full mx-auto px-4 bg-white text-white  md:w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
+                            <div className='md:w-[6rem] bg-gradient-to-r from-blue-600 to-indigo-600 absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' space-x-1 absolute z-40 font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text duration-700 hover:text-white items-center flex justify-center bg-white h-9 rounded-2xl w-[5.7rem]'>
+                                <p>Sign in</p>
+
+                                <img
+                                    src={`https://www.material-tailwind.com/logos/logo-google.png`}
+                                    alt="google"
+                                    className="h-4 w-4"
+                                />
+                            </div>
                         </div>
                     </div>
-                    <IconButton
-                        variant="text"
-                        color="gray"
-                        onClick={handleOpen}
-                        className="ml-auto inline-block lg:hidden"
-                    >
-                        {open ? (
-                            <XMarkIcon strokeWidth={2} className="h-6 w-6" />
-                        ) : (
-                            <Bars3Icon strokeWidth={2} className="h-6 w-6" />
-                        )}
-                    </IconButton>
                 </div>
                 <Collapse open={open}>
                     <div className="container mx-auto mt-3 border-t border-blue-gray-50 px-2 pt-4">
-                        <ul className="flex flex-col gap-4">
-                            <NavItem>
-                                <RectangleStackIcon className="h-5 w-5" />
-                                Pricing
-                            </NavItem>
-                            <NavItem>
-                                <UserCircleIcon className="h-5 w-5" />
-                                About Us
-                            </NavItem>
 
-                        </ul>
-                        <div className="mt-6 mb-4 flex items-center gap-4">
+                        <div onClick={() => signInWithGoogle()} className=" mx-auto px-4 bg-[#212121] w-[6rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
+                            <div className='w-[6rem] bg-gradient-to-r from-blue-600 to-indigo-600 absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' space-x-1 absolute z-40 font-semibold text-[#2dce89] duration-700 hover:text-black items-center flex justify-center bg-white h-9 rounded-2xl w-[5.7rem]'>
+                                <p>Sign in</p>
 
-                            <Button color="gray">Sign in</Button>
+                                <img
+                                    src={`https://www.material-tailwind.com/logos/logo-google.png`}
+                                    alt="google"
+                                    className="h-4 w-4"
+                                />
+                            </div>
                         </div>
                     </div>
                 </Collapse>
             </Navbar>
-            <div className="bg-white p-8 grid mt-16 min-h-[82vh] w-full lg:h-[54rem] md:h-[34rem] relative place-items-stretch bg-[url('/image/bg-hero-17.svg')] bg-center bg-contain bg-no-repeat gap-20">
+            <div className="bg-white pt-24  px-4 md:p-8 grid mt-4 md:mt-16  w-full l relative place-items-stretch  gap-20">
 
-                <div className="container mx-auto px-4 text-center">
+                <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="container mx-auto md:px-4 text-center ">
                     <Typography className="inline-flex text-xs rounded-lg border-[1.5px] border-blue-gray-50 bg-white py-1 lg:px-4 px-1 font-medium text-primary">
                         Trusted by 100,000+ Professionals & Students. 🚀
                     </Typography>
@@ -198,45 +172,45 @@ function LandingPage() {
                         className="mx-auto my-6 w-full leading-snug  !text-2xl lg:max-w-3xl lg:!text-5xl"
                     >
                         Land your{" "}
-                        <span className="text-green-500 leading-snug ">
+                        <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text leading-snug ">
                             dream job
                         </span>{" "}
                         interview.
                     </Typography>
                     <Typography
                         variant="lead"
-                        className="mx-auto w-full !text-gray-500 lg:text-lg text-base"
+                        className="mx-auto w-full !text-[#768499] lg:text-lg text-base"
                     >
                         Only a few resumes get to the hiring manager. Make yours tell the right story.
                     </Typography>
                     <div className="mt-8  w-full place-items-start md:justify-center">
 
-
-
-                        <div className="w-full mx-auto bg-green-500 px-4 md:w-[12rem] overflow-clip h-12 group relative flex flex-col justify-center items-center rounded-md cursor-pointer">
-                            <div className='md:w-[12rem] bg-[#212121] absolute h-12 z-20 rounded-md inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
-                            <div className=' absolute z-40 text-white'>Build My Resume</div>
+                        <div onClick={() => signInWithGoogle()} className="  mx-auto px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white  w-[10rem] overflow-clip h-10 group relative flex flex-col justify-center items-center rounded-[1.2rem] hover:shadow-md cursor-pointer">
+                            <div className='w-[10rem] bg-white absolute h-12 z-20 rounded-2xl inset-x-52 group-hover:inset-0 duration-700 transition-all'></div>
+                            <div className=' space-x-1 absolute z-40 font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:text-transparent hover:bg-clip-text duration-700 text-white items-center flex justify-center bg-white h-9 rounded-2xl w-[9.7rem]'>
+                                <p>Build My Resume</p>
+                            </div>
                         </div>
-
 
                         <Typography
                             // variant='paragraph'
-                            className=" w-full !text-gray-500 lg:text-sm text-base mt-2"
+                            className=" w-full !text-[#768499] lg:text-sm text-base mt-2  "
                         >
                             ATS-friendly format!
                         </Typography>
                     </div>
-                </div>
+                </motion.div>
 
-                <div className="w-full flex flex-row justify-evenly items-center">
+                <div className="w-full flex flex-col md:flex-row justify-evenly items-center saturate-[0.6]">
+
                     <div className="max-w-xl">
                         <i className="fa-solid fa-clipboard-check text-4xl text-gray-900" />
                         <Typography className="mt-6" variant="h4">
                             Get Hired Faster
                         </Typography>
                         <Typography
-                            className="mt-3 mb-14 text-base font-medium text-gray-500"
-                            variant="leading"
+                            className="mt-3 mb-14 text-base font-medium text-[#768499]"
+                            variant="lead"
                         >
                             {'Build a resume that passes the ATS (Applicant Tracking System) while impressing both the recruiters and hiring managers.'}
                         </Typography>
@@ -244,42 +218,19 @@ function LandingPage() {
 
 
 
-                    <div className=' w-[30rem] h-[30rem] '>
+                    <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 1 }} className=' md:w-[30rem] md:h-[30rem]  '>
                         <img src={LandingPageImg} alt="" />
-                    </div>
+                    </motion.div>
 
                 </div>
 
-                <div className="px-4 grid grid-cols-3 place-items-center place-content-start gap-6">
+                <div className="container mx-auto my-auto flex flex-col-reverse md:flex-row justify-evenly items-center">
 
-                    {cardData.map((item, index) =>
-                        <Card key={index} className=' hover:shadow-green-500 hover:shadow-md hover:border-none transition-all duration-300 border-green-500 border shadow-none'>
-                            <CardBody className="max-w-sm md:p-5 h-[20rem]">
-                                <HeartIcon className="w-14 h-14 text-gray-900" />
-                                <Typography
-                                    color="blue-gray"
-                                    className="mb-4 !mt-4 "
-                                    variant="h4"
-                                >
-                                    {item.title}
-                                </Typography>
-                                <Typography
-                                    variant="lead"
-                                    className="leading-8 text-gray-500"
-                                >
-                                    {item.description}
-                                </Typography>
+                    <div className=' w-full h-[30rem] md:w-[30rem] md:h-[30rem] relative overflow-clip flex justify-end items-end'>
+                        <motion.img initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 1 }} src={`https://latexresu.me/static/1.png`} alt="" className=' inset-x-2 absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
+                        <motion.img initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 1.2 }} src={`https://latexresu.me/static/2.png`} alt="" className=' inset-x-32 inset-y-16 absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
+                        <motion.img initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 1.4 }} src={`https://latexresu.me/static/3.png`} alt="" className=' inset-x-56 inset-y-4  absolute border-2 rounded-lg w-[15rem] h-[24rem]' />
 
-                            </CardBody>
-                        </Card>
-                    )
-                    }
-                </div>
-
-                <div className="container mx-auto my-auto flex flex-row justify-evenly items-center">
-
-                    <div className=' w-[30rem] h-[30rem] '>
-                        <img src={LandingPageImg} alt="" />
                     </div>
 
                     <div className="max-w-xl ">
@@ -289,7 +240,7 @@ function LandingPage() {
                             Resume template that stands out
                         </Typography>
                         <Typography
-                            className="mt-3 mb-14 text-base font-medium text-gray-500"
+                            className="mt-3 mb-14 text-base font-medium text-[#768499]"
                             variant="leading"
                         >
                             Building LaTeX resumes have never been easier. Make use of our rich-text editor and generate LaTeX resumes for every application.  </Typography>
@@ -299,141 +250,19 @@ function LandingPage() {
 
                 </div>
 
-
-
-
-
-                <div className="grid grid-cols-12 items-center lg:gap-x-10 gap-y-10 rounded-2xl bg-green-50 lg:p-12 p-6 h-[45rem] w-full">
-                    <div className="col-span-full lg:col-span-7 lg:max-w-lg mx-auto">
-                        <Typography
-                            variant="h2"
-
-                            className="mb-4 text-3xl lg:text-4xl"
-                        >
-                            Get in Touch
-                        </Typography>
-                        <Typography
-                            variant="lead"
-
-                            className="opacity-70 mb-12"
-                        >
-                            You need more information? Check what other persons are saying about
-                            our product. They are very happy with their purchase.
-                        </Typography>
-                        <div className="flex items-start gap-6 mb-14">
-                            <EnvelopeIcon className="h-6 w-6 " />
-                            <div>
-                                <Typography
-                                    variant="h5"
-                                    className="mb-4 text-2xl font-bold"
-                                >
-                                    Find us at the office
-                                </Typography>
-                                <Typography
-
-                                    className="font-normal leading-8 opacity-80"
-                                >
-                                    Bld Mihail Kogalniceanu, nr. 8,
-                                    <br /> 7652 Bucharest, <br /> Romania
-                                </Typography>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-6">
-                            <PhoneIcon className="h-6 w-6 " />
-                            <div>
-                                <Typography
-                                    variant="h5"
-                                    className="mb-4 text-2xl font-bold"
-                                >
-                                    Give us a ring
-                                </Typography>
-                                <Typography
-
-                                    className="font-normal opacity-80"
-                                >
-                                    Michael Jordan <br /> +40 762 321 762 <br /> Mon - Fri,
-                                    8:00-22:00
-                                </Typography>
-                            </div>
-                        </div>
-                    </div>
-                    <Card className="bg-white col-span-full lg:col-span-5 rounded-xl py-8 px-8 lg:px-16 lg:py-16">
-                        <Typography
-                            variant="h2"
-                            color="blue-gray"
-                            className="mb-8 !text-2xl lg:!text-3xl"
-                        >
-                            Contact us
-                        </Typography>
-                        <form action="#" className="flex flex-col gap-4">
-                            <div className="grid gap-4 grid-cols-2">
-                                <Input
-                                    color="gray"
-                                    size="lg"
-                                    label="First Name"
-                                    name="first-name"
-                                    containerProps={{
-                                        className: "!min-w-full",
-                                    }}
-                                />
-                                <Input
-                                    color="gray"
-                                    size="lg"
-                                    label="Last Name"
-                                    name="last-name"
-                                    containerProps={{
-                                        className: "!min-w-full",
-                                    }}
-                                />
-                            </div>
-                            <Input
-                                color="gray"
-                                type="email"
-                                size="lg"
-                                label="Email"
-                                name="email"
-                            />
-                            <Textarea
-                                rows={7}
-                                color="gray"
-                                size="lg"
-                                label="Message"
-                                name="message"
-                            />
-                            <Checkbox
-                                color="gray"
-                                label={
-                                    <Typography className="font-normal text-base !text-gray-500 -mt-2">
-                                        You agree to our{" "}
-                                        <a
-                                            href="#"
-                                            className="font-medium text-gray-700 hover:text-gray-900"
-                                        >
-                                            Privacy Policy
-                                        </a>
-                                        .
-                                    </Typography>
-                                }
-                                containerProps={{
-                                    className: "-ml-2.5 -mt-2",
-                                }}
-                            />
-                            <Button size="lg" color="gray" className="mt-6" fullWidth>
-                                send message
-                            </Button>
-                        </form>
-                    </Card>
+                <div className='w-full'>
+                    <FeatureScroll features={cardData} />
                 </div>
 
 
-                <div className=' w-full '>
+                {/* <div className=' w-full '>
                     <div className=" container grid min-h-full place-items-center">
                         <div className="container mx-auto max-w-3xl px-8">
                             <div className="grid place-items-center py-20 text-center">
                                 <Typography variant="h2" color="blue-gray">
                                     Choose a plan
                                 </Typography>
-                                <Typography variant="lead" className="mt-2 !text-gray-500">
+                                <Typography variant="lead" className="mt-2 !text-[#768499]">
                                     Students or professionals? We've got you covered.
                                 </Typography>
                             </div>
@@ -496,35 +325,20 @@ function LandingPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
-                <div className="px-8 py-28">
+                <div className="px-8  pb-9 md:py-14 border-t">
                     <div className="container mx-auto">
                         <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
-                            <Typography className="!text-sm font-medium text-gray-500 lg:text-left text-center">
-                                All rights reserved. Copyright &copy; 2024 <br /> Hey Resume.
+                            <Typography className="!text-sm font-medium text-[#768499] lg:text-left text-center">
+                                All rights reserved. Copyright &copy; 2024 <br /> DivCode Tech <br />
+
                             </Typography>
                             <div className="flex lg:ml-auto place-content-center gap-2">
-                                <a href="#buttons-with-link">
-                                    <IconButton variant="text" size="sm">
-                                        <InboxStackIcon className="fa-brands fa-twitter text-lg text-gray-500 transition-colors hover:text-blue-gray-900" />
-                                    </IconButton>
-                                </a>
-                                <a href="#buttons-with-link">
-                                    <IconButton variant="text" size="sm">
-                                        <i className="fa-brands fa-youtube text-lg text-gray-500 transition-colors hover:text-blue-gray-900" />
-                                    </IconButton>
-                                </a>
-                                <a href="#buttons-with-link">
-                                    <IconButton variant="text" size="sm">
-                                        <i className="fa-brands fa-instagram text-lg text-gray-500 transition-colors hover:text-blue-gray-900" />
-                                    </IconButton>
-                                </a>
-                                <a href="#buttons-with-link">
-                                    <IconButton variant="text" size="sm">
-                                        <i className="fa-brands fa-github text-lg text-gray-500 transition-colors hover:text-blue-gray-900" />
-                                    </IconButton>
-                                </a>
+                                <Typography color="blue-gray" className="text-2xl font-bold">
+                                    <span className=' bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text'>Hey </span>
+                                    Resume !
+                                </Typography>
                             </div>
                         </div>
                     </div>

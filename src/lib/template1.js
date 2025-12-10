@@ -37,7 +37,7 @@ const generator = {
   },
 
   educationSection(education, heading) {
-    if (!education) {
+    if (education.length == 0) {
       return '';
     }
 
@@ -101,7 +101,7 @@ const generator = {
   },
 
   workSection(work, heading) {
-    if (!work) {
+    if (work.length == 0) {
       return '';
     }
 
@@ -159,7 +159,7 @@ const generator = {
   },
 
   skillsSection(skills, heading) {
-    if (!skills) {
+    if (skills.length == 0) {
       return '';
     }
 
@@ -176,7 +176,7 @@ const generator = {
   },
 
   projectsSection(projects, heading) {
-    if (!projects) {
+    if (projects.length == 0) {
       return '';
     }
 
@@ -197,7 +197,9 @@ const generator = {
       }
 
       if (keywords) {
-        line1 += ` {\\sl ${keywords.join(', ')}} `;
+        if (keywords[0] == '') {
+          line1 += ` {\\sl ${keywords.join(', ')}} `
+        }
       }
 
       if (url) {
@@ -222,7 +224,7 @@ const generator = {
   },
 
   awardsSection(awards, heading) {
-    if (!awards) {
+    if (awards.length == 0) {
       return '';
     }
 
@@ -345,9 +347,6 @@ function template1(values) {
         switch (section) {
           case 'profile':
             return generator.profileSection(values.basics);
-
-          case 'summary':
-            return generator.summarySection(values.summary);
 
           case 'education':
             return generator.educationSection(
