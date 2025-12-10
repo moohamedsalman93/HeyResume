@@ -1,28 +1,5 @@
-import {
-    IconButton, Navbar, Tooltip, Typography, Dialog,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
-    Button,
-    Popover,
-    PopoverHandler,
-    PopoverContent,
-    Progress,
-    Chip,
-    Card,
-    List,
-    ListItem,
-    CardHeader,
-    Drawer,
-    Tabs,
-    TabsHeader,
-    Tab,
-    TabsBody,
-    TabPanel,
-} from '@material-tailwind/react'
-import React, { useEffect, useRef, useState } from 'react'
-import getTemplateData from '../../lib/getTemplateData';
-import latex from '../../lib/latext';
+import { IconButton, Navbar, Tooltip, Typography } from '@material-tailwind/react'
+import React, { useEffect, useState } from 'react'
 import { pdfjs, Document, Page } from 'react-pdf'
 import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, Bars3Icon, ChevronRightIcon, ClockIcon, CursorArrowRaysIcon, DocumentTextIcon, KeyIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, RocketLaunchIcon, ShareIcon, ShoppingBagIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
@@ -205,18 +182,25 @@ function ResumePage({ isLoading, setIsLoading }) {
 
     //#region save
     const generatePDF = async () => {
-        setIsLoading(true)
         try {
-            const sanitizedData = sanitizeData(exampleData);
-            const { texDoc, opts } = getTemplateData(sanitizedData);
-            const pdfUrl = await latex(texDoc, opts);
-            setPdfUrl(pdfUrl);
-            setIsLoading(false)
-        } catch (err) {
-            setIsLoading(false)
-            console.log(err)
-        }
+            const response = await fetch('/api/compile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(exampleData),
+            });
 
+            if (!response.ok) {
+                throw new Error('Failed to compile PDF');
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            setPdfUrl(url);
+        } catch (error) {
+            console.error('PDF generation failed:', error);
+        }
     };
     //#endregion
 
