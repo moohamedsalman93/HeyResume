@@ -1,4 +1,15 @@
-import { IconButton, Navbar, Tooltip, Typography, Popover, PopoverHandler, PopoverContent, Progress, Dialog, DialogHeader, DialogBody, DialogFooter, Button, Tabs, TabsHeader, Tab, Drawer, Card, List, ListItem } from '@material-tailwind/react'
+import IconButton from '../../components/ui/IconButton';
+import Navbar from '../../components/ui/Navbar';
+import Tooltip from '../../components/ui/Tooltip';
+import Typography from '../../components/ui/Typography';
+import Popover, { PopoverHandler, PopoverContent } from '../../components/ui/Popover';
+import Progress from '../../components/ui/Progress';
+import Dialog, { DialogHeader, DialogBody, DialogFooter } from '../../components/ui/Dialog';
+import Button from '../../components/ui/Button';
+import Tabs, { TabsHeader, Tab } from '../../components/ui/Tabs';
+import Drawer from '../../components/ui/Drawer';
+import Card from '../../components/ui/Card';
+import List, { ListItem } from '../../components/ui/List';
 import React, { useEffect, useState, useRef } from 'react'
 import { pdfjs, Document, Page } from 'react-pdf'
 import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, Bars3Icon, ChevronRightIcon, ClockIcon, CursorArrowRaysIcon, DocumentTextIcon, KeyIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, RocketLaunchIcon, ShareIcon, ShoppingBagIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -23,6 +34,7 @@ import { sanitizeData } from '../../components/FilterText';
 import { GripVertical, Ham, Menu } from 'lucide-react';
 import latex from '../../lib/latext';
 import getTemplateData from '../../lib/getTemplateData';
+import { twMerge } from 'tailwind-merge';
 
 
 
@@ -268,37 +280,40 @@ function ResumePage({ isLoading, setIsLoading }) {
 
     //#region download pdf
     const handleDownload = async () => {
-        if (pdfUrl) {
-
-            const { data: { user }, error } = await supabase.auth.getUser();
-            if (error || !user) {
-                console.error('Failed to fetch user data');
-                return;
-            }
-            const { data, error: resumeError } = await supabase
-                .from('user_details')
-                .insert([
-                    {
-                        uuid: user.id,
-                        pdf_name: previewName,
-                        content: JSON.stringify(exampleData),
-                    }
-                ])
-                .single();
-            if (resumeError) {
-                console.error('Failed to save resume to database', resumeError);
-            }
-
-
-            const link = document.createElement('a');
-            link.href = pdfUrl;
-            link.setAttribute('download', previewName + '.pdf'); // You can specify the filename here
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-        } else {
+        if (!pdfUrl) {
             console.log('No PDF URL available');
+            return;
         }
+
+        try {
+            const { data: { user }, error } = await supabase.auth.getUser();
+
+            // If logged in, save resume to history; guests can still download without saving.
+            if (!error && user) {
+                const { error: resumeError } = await supabase
+                    .from('user_details')
+                    .insert([
+                        {
+                            uuid: user.id,
+                            pdf_name: previewName,
+                            content: JSON.stringify(exampleData),
+                        }
+                    ])
+                    .single();
+                if (resumeError) {
+                    console.error('Failed to save resume to database', resumeError);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to handle resume download/save', err);
+        }
+
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.setAttribute('download', previewName + '.pdf'); // You can specify the filename here
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
     };
     //#endregion
 
@@ -411,33 +426,65 @@ function ResumePage({ isLoading, setIsLoading }) {
     }
     //#endregion
 
-    //#region check session useEffect
+    //#region check session useEffect (optional login)
     useEffect(() => {
         const checkSession = async () => {
-            const { data: { user }, error } = await supabase.auth.getUser();
-            if (error || !user) {
-                navigate('/');
-            } else {
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                if (error || !user) {
+                    // Allow anonymous users; just don't set user details.
+                    setUserDetails({
+                        uuid: "",
+                        name: "",
+                        email: "",
+                        profileImage: "",
+                    });
+                    return;
+                }
+
                 const token = localStorage.getItem('sb-jiacmpdzhulppqaqsbkb-auth-token');
                 if (token) {
                     try {
-                        setUserDetails({
-                            uuid: user.id,
-                            name: user.user_metadata.name,
-                            email: user.user_metadata.email,
-                            profileImage: user.user_metadata.avatar_url
-                        })
                         const tokenExpiry = JSON.parse(token)?.expires_at;
                         const isTokenExpired = new Date(tokenExpiry * 1000) < new Date();
                         if (isTokenExpired) {
-                            navigate('/');
+                            // Token expired; sign out but keep user on the page.
+                            await supabase.auth.signOut();
+                            setUserDetails({
+                                uuid: "",
+                                name: "",
+                                email: "",
+                                profileImage: "",
+                            });
+                            return;
                         }
-
                     } catch (error) {
                         console.error('Invalid token:', error);
-                        navigate('/');
+                        await supabase.auth.signOut();
+                        setUserDetails({
+                            uuid: "",
+                            name: "",
+                            email: "",
+                            profileImage: "",
+                        });
+                        return;
                     }
                 }
+
+                setUserDetails({
+                    uuid: user.id,
+                    name: user.user_metadata.name,
+                    email: user.user_metadata.email,
+                    profileImage: user.user_metadata.avatar_url
+                });
+            } catch (err) {
+                console.error('Failed to check session:', err);
+                setUserDetails({
+                    uuid: "",
+                    name: "",
+                    email: "",
+                    profileImage: "",
+                });
             }
         };
         checkSession();
@@ -479,18 +526,16 @@ function ResumePage({ isLoading, setIsLoading }) {
 
 
             <div className=" w-full flex items-center justify-between min-h-[8%] shadow-md bg-white border p-2 px-3">
-                <div className=' flex items-center divide-x h-full space-x-2'>
-                    <Typography color="blue-gray" className="md:text-2xl font-bold">
+                <div className=' flex items-center gap-4 h-full'>
+                    <Typography variant="h4" className="md:text-2xl font-bold">
                         <span className=' bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text'>Hey </span>
                         Resume !
                     </Typography>
 
-                    <div className=' w-[1.5px] h-full bg-blue-gray-300'>
+                    <div className=' w-px h-6 bg-gray-200 hidden md:block'></div>
 
-                    </div>
-
-                    <div className=' bg-blue-50 rounded-full px-3 py-1 hidden md:flex'>
-                        <Typography className="text-sm font-light text-blue-300 cursor-default">
+                    <div className=' bg-blue-50/50 border border-blue-100/50 rounded-full px-3 py-0.5 hidden md:flex'>
+                        <Typography variant="tiny" className="text-blue-600 font-semibold tracking-normal lowercase">
                             Standard
                         </Typography>
                     </div>
@@ -500,30 +545,23 @@ function ResumePage({ isLoading, setIsLoading }) {
                 <div className='flex'>
                     <Popover placement="bottom-end">
                         <PopoverHandler>
-                            <div className=' flex items-center gap-2 cursor-pointer'>
-                                <div className=' h-10 w-10 bg-blue-gray-50 border rounded-full overflow-clip'>
+                            <div className=' flex items-center gap-3 cursor-pointer group'>
+                                <div className=' h-10 w-10 bg-gray-100 border border-gray-100 rounded-full overflow-hidden group-hover:ring-2 ring-blue-500/20 transition-all'>
                                     <img src={userDetails?.profileImage} alt="" className=' w-full h-full object-cover' />
                                 </div>
-                                <div className=' md:flex flex-col w-[10rem] hidden'>
-                                    <Typography className='text-[#768499]  w-[10rem] overflow-hidden text-ellipsis' variant='h6'>{userDetails?.name}</Typography>
-                                    <Typography className='text-[#768499] w-[10rem] overflow-hidden text-ellipsis' variant='small'>{userDetails?.email}</Typography>
+                                <div className=' md:flex flex-col hidden'>
+                                    <Typography variant="h6" className='text-gray-900 group-hover:text-blue-600 transition-colors leading-none mb-1'>{userDetails?.name}</Typography>
+                                    <Typography variant="small" className='text-gray-500 leading-none'>{userDetails?.email}</Typography>
                                 </div>
                             </div>
-
                         </PopoverHandler>
-                        <PopoverContent className="md:w-[12rem] divide-y-2 flex flex-col pl-5">
-
-
-                            <div className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-blue-gray-900 cursor-pointer transition-colors duration-700'>
-                                <Typography >
-                                    Order
-                                </Typography>
-                                <ShoppingBagIcon className=' h-4 w-4' />
+                        <PopoverContent className="min-w-[14rem] p-1">
+                            <div className=' p-2 hover:bg-gray-50 rounded-lg flex items-center justify-between text-gray-700 cursor-pointer transition-colors'>
+                                <Typography variant="body" className="font-medium">Order</Typography>
+                                <ShoppingBagIcon className=' h-4 w-4 text-gray-400' />
                             </div>
-                            <div onClick={() => handleLogout()} className=' h-10 flex  items-center w-[7.5rem] justify-between hover:text-red-500 cursor-pointer  transition-colors duration-700'>
-                                <Typography  >
-                                    Log out
-                                </Typography>
+                            <div onClick={handleLogout} className=' p-2 hover:bg-red-50 rounded-lg flex items-center justify-between text-red-600 cursor-pointer transition-colors'>
+                                <Typography variant="body" className="font-medium text-inherit">Log out</Typography>
                                 <ArrowRightStartOnRectangleIcon className=' h-4 w-4' />
                             </div>
                         </PopoverContent>
@@ -537,34 +575,34 @@ function ResumePage({ isLoading, setIsLoading }) {
                 <div className=' w-[15%] h-full'>
                     <div className=' p-5 bg-white dark:bg-[#14171d]gap-1  h-full flex flex-col justify-start    border-r '>
 
-                        <div className=' mt-2 mb-4'>
-                            <Typography
-                                variant="h6"
-                                className={` flex items-center bg-gradient-to-r from-blue-600 to-indigo-600  bg-clip-text group-hover:text-transparent text-black`}
-                            >
+                        <div className=' mt-2 mb-4 px-2'>
+                            <Typography variant="tiny" className="text-gray-400 font-bold tracking-widest">
                                 Sections
                             </Typography>
                         </div>
 
-                        {
-                            contentPages.map((item, index) =>
-                                <div key={index} onClick={() => setSelectedPage(item)} className={`    w-full h-10 py-2  rounded-lg relative flex justify-start items-center overflow-hidden cursor-pointer group`}>
-                                    {/* <GripVertical className='  h-4 w-4 group-hover:flex hidden absolute left-1 cursor-grab  ' /> */}
+                        <div className="flex flex-col gap-1">
+                            {contentPages.map((item, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setSelectedPage(item)}
+                                    className={twMerge(
+                                        'w-full py-2.5 px-4 rounded-xl relative flex justify-start items-center cursor-pointer transition-all duration-300 group overflow-hidden',
+                                        selectedPage === item ? 'bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md ring-4 ring-blue-500/10' : 'hover:bg-gray-50'
+                                    )}
+                                >
                                     <Typography
-                                        key={index}
-                                        variant="paragraph"
-                                        draggable
-                                        className={`${selectedPage === item ? 'text-[#ffffff]' : 'text-[#21333c]  bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text group-hover:text-transparent group-hover:translate-x-4'} duration-400 transition-transform ease-in-out translate-x-0  ml-4 z-20 absolute flex items-center gap-2 font-medium  `}
+                                        variant="body"
+                                        className={twMerge(
+                                            'z-20 font-semibold transition-all duration-300',
+                                            selectedPage === item ? 'text-white translate-x-1' : 'text-gray-600 group-hover:text-blue-600'
+                                        )}
                                     >
-
                                         {item}
                                     </Typography>
-                                    <div className={` w-full h-10 py-2 ${selectedPage === item ? 'inset-0 ' : '-inset-96'} duration-700 transition-all  bg-gradient-to-r from-blue-600 to-indigo-600 z-10 rounded-lg pl-5 absolute`}>
-
-                                    </div>
-                                </div>
-                            )
-                        }
+                                </button>
+                            ))}
+                        </div>
 
                         <div className=' mt-6'>
                             <Typography
@@ -692,40 +730,40 @@ function ResumePage({ isLoading, setIsLoading }) {
                             </Typography>
                         </div>
 
-                        <div className=' flex space-x-4 '>
-
+                        <div className=' flex items-center gap-2'>
                             <Tooltip content="Zoom out">
-                                <IconButton color='white' onClick={zoomOut}>
-                                    <MinusIcon className='w-6 h-6 cursor-pointer text-[#768499]' />
+                                <IconButton variant="ghost" onClick={zoomOut}>
+                                    <MinusIcon className='w-5 h-5 text-gray-500' />
                                 </IconButton>
                             </Tooltip>
 
                             <Tooltip content="Zoom in">
-                                <IconButton color='white' onClick={zoomIn}>
-                                    <PlusIcon className='w-6 h-6 cursor-pointer text-[#768499]' />
+                                <IconButton variant="ghost" onClick={zoomIn}>
+                                    <PlusIcon className='w-5 h-5 text-gray-500' />
                                 </IconButton>
                             </Tooltip>
 
-                            <div className=' h-8 my-auto w-[0.5px] bg-blue-gray-300'></div>
+                            <div className=' h-6 w-px bg-gray-200'></div>
 
-                            <div className=' flex items-center w-fit'>
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={generatePDF}
+                                className="py-2 px-3 h-9"
+                            >
+                                <Typography variant="small" className="font-semibold text-blue-600">Save</Typography>
+                                <DocumentTextIcon className="h-4 w-4" />
+                            </Button>
 
-                                <button onClick={generatePDF} className=' flex items-center gap-2 py-[0.6rem] px-2 bg-blue-700/5    dark:bg-[#14171d] rounded-lg hover:shadow-md   duration-500 transition-all'>
-                                    <Typography
-                                        className='overflow-hidden text-ellipsis items-center text-blue-800'
-                                        variant='small'
-                                    >
-                                        Save
-                                    </Typography>
-                                    <DocumentTextIcon strokeWidth={2} className="h-4 w-4 text-blue-800 transition-all duration-500 " />
-                                </button>
-
-                            </div>
-
-                            <IconButton disabled={!pdfUrl} onClick={handleDownload} variant='outlined' className=' border border-blue-800' >
-                                <ArrowDownTrayIcon strokeWidth={4} className="h-5 w-5  text-blue-800 transition-all duration-500 " />
+                            <IconButton
+                                variant="filled"
+                                color="blue"
+                                disabled={!pdfUrl}
+                                onClick={handleDownload}
+                                className="h-9 w-9"
+                            >
+                                <ArrowDownTrayIcon className="h-4 w-4" />
                             </IconButton>
-
                         </div>
 
 
@@ -764,61 +802,52 @@ function ResumePage({ isLoading, setIsLoading }) {
 
                     </div>
 
-                    <div className='h-12 w-full flex justify-center pr-4 items-center border-t p-2'>
-                        <div className="flex items-center gap-8">
+                    <div className='h-12 w-full flex justify-center items-center border-t border-gray-100 bg-gray-50/50'>
+                        <div className="flex items-center gap-6">
                             <IconButton
-                                size="sm"
                                 variant="outlined"
                                 onClick={prev}
                                 disabled={pageNumber === 1}
-                                className=' border border-[#768499]'
+                                className='h-8 w-8 rounded-lg'
                             >
-                                <ArrowLeftIcon strokeWidth={2} className="h-4 w-4 text-[#768499]" />
+                                <ArrowLeftIcon className="h-4 w-4" />
                             </IconButton>
-                            <Typography color="gray" className="font-normal">
-                                Page <strong className="text-[#768499]">{pageNumber}</strong> of{" "}
-                                <strong className="text-[#768499]">{numPages}</strong>
+                            <Typography variant="small" className="font-medium text-gray-600">
+                                Page <span className="text-gray-900 font-bold">{pageNumber}</span> of{" "}
+                                <span className="text-gray-900 font-bold">{numPages}</span>
                             </Typography>
                             <IconButton
-                                size="sm"
                                 variant="outlined"
                                 onClick={next}
-                                disabled={pageNumber === 10}
-                                className=' border border-[#768499]'
+                                disabled={pageNumber === numPages}
+                                className='h-8 w-8 rounded-lg'
                             >
-                                <ArrowRightIcon strokeWidth={2} className="h-4 w-4 text-[#768499]" />
+                                <ArrowRightIcon className="h-4 w-4" />
                             </IconButton>
                         </div>
-
                     </div>
 
                 </div>
 
                 <Dialog size='sm' open={confirmPopup !== -1} handler={() => setConfirmPopup(-1)}>
-                    <DialogHeader>
-
-                        <Typography variant='h5' className=' text-[#344767] '>
-                            Confirm Edit
-                        </Typography>
-                    </DialogHeader>
-                    <DialogBody className=' relative flex flex-col items-center w-full h-fit overflow-y-auto '>
-                        <div className=' flex flex-col items-center'>
-                            <Typography >Your current changes will be dicord</Typography>
-                            <Typography variant='h6' > Are you sure to edit this  ?  {historyData[confirmPopup]?.pdf_name}.pdf -  {formatDate(historyData[confirmPopup]?.created_at)}</Typography>
-
+                    <DialogHeader>Confirm Edit</DialogHeader>
+                    <DialogBody>
+                        <div className=' flex flex-col items-center text-center gap-2'>
+                            <Typography variant="body" className="text-gray-600">
+                                Your current unsaved changes will be lost.
+                            </Typography>
+                            <Typography variant='h6' className="text-gray-900">
+                                Are you sure you want to edit "{historyData[confirmPopup]?.pdf_name}.pdf" from {formatDate(historyData[confirmPopup]?.created_at)}?
+                            </Typography>
                         </div>
                     </DialogBody>
                     <DialogFooter>
-
-                        <div className=' flex gap-2'>
-                            <Button variant="text" className=' hover:bg-blue-800/5 hover:text-blue-700' onClick={() => setConfirmPopup(-1)}>
-                                <span>Cancel</span>
-                            </Button>
-                            <Button className=' bg-gradient-to-r from-blue-600 to-indigo-600  text-white' onClick={handleEdit}>
-                                <span>Confirm</span>
-                            </Button>
-                        </div>
-
+                        <Button variant="ghost" onClick={() => setConfirmPopup(-1)}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" onClick={handleEdit}>
+                            Confirm
+                        </Button>
                     </DialogFooter>
                 </Dialog>
 
@@ -868,7 +897,7 @@ function ResumePage({ isLoading, setIsLoading }) {
 
                 <div className=' w-full h-[7%] border-b-2 flex items-center justify-between px-4'>
 
-                    <Popover open={openHamburger} handler={setOpenHamburger}  placement="bottom-end">
+                    <Popover open={openHamburger} handler={setOpenHamburger} placement="bottom-end">
                         <PopoverHandler>
                             <IconButton onClick={() => setOpenHamburger(!openHamburger)} variant='text'  >
                                 <Menu className=' h-6 w-6' />
@@ -889,7 +918,7 @@ function ResumePage({ isLoading, setIsLoading }) {
 
                                 {
                                     contentPages.map((item, index) =>
-                                        <div key={index} onClick={() => { setOpenHamburger(!openHamburger); setSelectedPage(item)} } className={`    w-full h-10 py-2  rounded-lg relative flex justify-start items-center overflow-hidden cursor-pointer group`}>
+                                        <div key={index} onClick={() => { setOpenHamburger(!openHamburger); setSelectedPage(item) }} className={`    w-full h-10 py-2  rounded-lg relative flex justify-start items-center overflow-hidden cursor-pointer group`}>
                                             {/* <GripVertical className='  h-4 w-4 group-hover:flex hidden absolute left-1 cursor-grab  ' /> */}
                                             <Typography
                                                 key={index}
@@ -929,7 +958,7 @@ function ResumePage({ isLoading, setIsLoading }) {
 
                                 </div>
 
-                                <div onClick={() => {setOpenHamburger(!openHamburger); setAiOpen(true)}} className=' mt-2 cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#1762df] duration-700 transition-all '>
+                                <div onClick={() => { setOpenHamburger(!openHamburger); setAiOpen(true) }} className=' mt-2 cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#1762df] duration-700 transition-all '>
                                     <RocketLaunchIcon className='  transition-transform duration-300 group-hover:translate-x-2 group-hover:-translate-y-2  ml-8  h-6 group-hover:text-[#1762df]  text-[#21333c] ' />
                                     <Typography
 
@@ -942,7 +971,7 @@ function ResumePage({ isLoading, setIsLoading }) {
 
                                 </div>
 
-                                <div onClick={() => {setOpenHamburger(!openHamburger); setKeyOpen(true)}} className=' mt-2 cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#1762df] duration-700 transition-all '>
+                                <div onClick={() => { setOpenHamburger(!openHamburger); setKeyOpen(true) }} className=' mt-2 cursor-pointer w-full h-11  rounded-xl flex items-center gap-2 hover:border group hover:border-[#1762df] duration-700 transition-all '>
                                     <KeyIcon className=' transition-transform duration-500 group-hover:rotate-45 group-hover:-translate-x-3 ml-8  h-6 group-hover:text-[#1762df]  text-[#21333c] ' />
                                     <Typography
 
@@ -1204,139 +1233,133 @@ function ResumePage({ isLoading, setIsLoading }) {
             </AnimatePresence>
 
 
-            <Drawer size={500} placement="right" open={keyOpen} onClose={() => setKeyOpen(false)} className='p-4 rounded-l-lg flex flex-col gap-10 '>
-                <div className='flex items-center justify-between space-x-3'>
-                    <div className=' flex items-center space-x-3'>
-                        <IconButton onClick={() => setKeyOpen(false)} variant="text">
-                            <ArrowLeftIcon className='text-[#21333c] stroke-2 h-5 w-5' />
+            <Drawer placement="right" open={keyOpen} onClose={() => setKeyOpen(false)} className='p-6 flex flex-col gap-8'>
+                <div className='flex items-center justify-between'>
+                    <div className=' flex items-center gap-4'>
+                        <IconButton variant="ghost" onClick={() => setKeyOpen(false)}>
+                            <ArrowLeftIcon className='text-gray-900 h-5 w-5' />
                         </IconButton>
-                        <Typography variant='h5' className=' text-[#21333c] '>
+                        <Typography variant='h5' className=' text-gray-900 '>
                             Keywords Picker
                         </Typography>
                     </div>
 
-                    <Typography className=" text-[#1762df] text-xs font-semibold cursor-pointer">
-                        Example
+                    <Typography variant="tiny" className=" text-blue-600 font-bold cursor-pointer hover:underline">
+                        EXAMPLE
                     </Typography>
                 </div>
 
-
-                <div className=' flex flex-col items-center gap-2 w-full '>
-                    <textarea placeholder="Copy and past Job Description here to generate keywords " value={jobDescription} onChange={handleJobDesChange} className=' outline-0 p-1 text-sm  min-h-[8rem] overflow-y-auto   w-full transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                <div className=' flex flex-col gap-2'>
+                    <Typography variant="small" className="font-semibold text-gray-700">Job Description</Typography>
+                    <textarea
+                        placeholder="Paste Job Description here to generate keywords..."
+                        value={jobDescription}
+                        onChange={handleJobDesChange}
+                        className='outline-none p-3 text-sm min-h-[10rem] w-full border border-gray-200 rounded-xl text-gray-600 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all'
+                    />
                 </div>
 
-                <div className=' gap-3 flex flex-wrap max-h-full overflow-y-auto overflow-hidden relative p-2'>
-                    {
-                        keywords.map((item, index) => {
-                            const isHighlighted = exampleData.skills.some(skill => skill.keywords.includes(item));
-                            return (
-                                <div className={``}>
-                                    <div className=' relative'>
-                                        {isHighlighted && (
-                                            <div
-                                                onClick={() => handleRemoveKeyword(item)} // Function to remove keyword
-                                                className="absolute -top-2 -right-2 cursor-pointer text-red-500 rounded-full "
-                                            >
-                                                <XCircleIcon className=' h-6 w-6 hover:scale-90' />
-                                            </div>
-                                        )}
-                                        <div
-                                            onClick={() => setOpenSkillSelector(isHighlighted ? -1 : index)}
-                                            key={index}
-                                            className={`cursor-pointer transition-all duration-500 py-1 px-3 border-[#FACD03] text-[#FACD03] border rounded-lg ${isHighlighted ? 'bg-[#FFF4C8] border-none ' : 'text-black hover:bg-[#FFF4C8] hover:border-none '}`}
-                                        >
-                                            {item}
-                                        </div>
-                                        {openSkillSelector === index &&
-                                            <Card ref={AddInPopRef} className=" w-48 absolute z-30 py-2 border shadow-2xl">
-                                                <div className=' px-2 font-semibold border-b text-[#21333c]'>
-                                                    Choose Title
-                                                </div>
-                                                <List className=' px-1 '>
-                                                    {
-                                                        exampleData?.skills.map(({ name }, index2) =>
-                                                            name && <ListItem className='!p-2 w-44' onClick={() => handleAddkeywordInSkill(index2, item)}>{index2 + 1}.{name}</ListItem>
-                                                        )
-                                                    }
-                                                </List>
-                                            </Card>
-                                        }
-                                    </div>
+                <div className='flex flex-wrap gap-2 overflow-y-auto pr-2'>
+                    {keywords.map((item, index) => {
+                        const isHighlighted = exampleData.skills.some(skill => skill.keywords.includes(item));
+                        return (
+                            <div key={index} className='relative'>
+                                {isHighlighted && (
+                                    <button
+                                        onClick={() => handleRemoveKeyword(item)}
+                                        className="absolute -top-1 -right-1 text-red-500 bg-white rounded-full p-0.5 shadow-sm hover:scale-110 transition-transform z-10"
+                                    >
+                                        <XCircleIcon className='h-4 w-4' />
+                                    </button>
+                                )}
+                                <div
+                                    onClick={() => setOpenSkillSelector(isHighlighted ? -1 : index)}
+                                    className={twMerge(
+                                        'cursor-pointer transition-all duration-200 py-1.5 px-4 rounded-lg text-sm font-medium border transition-colors',
+                                        isHighlighted
+                                            ? 'bg-blue-50 text-blue-600 border-blue-100 shadow-sm'
+                                            : 'bg-gray-50 text-gray-600 border-gray-100 hover:bg-gray-100 hover:text-gray-900'
+                                    )}
+                                >
+                                    {item}
                                 </div>
-
-                            );
-                        })
-                    }
-
-
-
+                                {openSkillSelector === index &&
+                                    <div ref={AddInPopRef} className="absolute top-full mt-2 left-0 z-[1001] w-56 bg-white border border-gray-100 rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                        <div className=' px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-50 mb-1'>
+                                            Add to section
+                                        </div>
+                                        <div className=' flex flex-col gap-0.5 max-h-[12rem] overflow-y-auto'>
+                                            {exampleData?.skills.map(({ name }, index2) => (
+                                                name && (
+                                                    <button
+                                                        key={index2}
+                                                        className='w-full text-left px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors font-medium'
+                                                        onClick={() => handleAddkeywordInSkill(index2, item)}
+                                                    >
+                                                        {index2 + 1}. {name}
+                                                    </button>
+                                                )
+                                            ))}
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        );
+                    })}
                 </div>
-
             </Drawer>
 
 
-            <Drawer size={500} placement="right" open={historyOpen} onClose={() => setHistoryOpen(false)} className='p-4 rounded-l-lg flex flex-col gap-10 '>
-                <div className='flex items-center justify-between space-x-3'>
-                    <div className=' flex items-center space-x-3'>
-                        <IconButton onClick={() => setHistoryOpen(false)} variant="text">
-                            <ArrowLeftIcon className='text-[#21333c] stroke-2 h-5 w-5' />
+            <Drawer placement="right" open={historyOpen} onClose={() => setHistoryOpen(false)} className='p-6 flex flex-col gap-8'>
+                <div className='flex items-center justify-between'>
+                    <div className=' flex items-center gap-4'>
+                        <IconButton variant="ghost" onClick={() => setHistoryOpen(false)}>
+                            <ArrowLeftIcon className='text-gray-900 h-5 w-5' />
                         </IconButton>
-                        <Typography variant='h5' className=' text-[#21333c] '>
+                        <Typography variant='h5' className=' text-gray-900 '>
                             History
                         </Typography>
                     </div>
 
-                    <Typography className="  text-[#1762df] text-xs font-semibold cursor-pointer">
-                        Example
+                    <Typography variant="tiny" className=" text-blue-600 font-bold cursor-pointer hover:underline">
+                        REFRESH
                     </Typography>
                 </div>
 
-
-                {
-                    isLoadingHistory ?
-                        <div className=' flex flex-col justify-center items-center h-full w-full'>
-                            <Lottie animationData={loading} loop={true} className=' w-[7rem]' />
-                        </div> :
-                        <div className=' h-[30rem] w-full md:px-2 px-1 flex flex-col items-center'>
-
-                            <div className=' h-12 grid grid-cols-5 w-full border-b place-content-center md:px-10  '>
-                                <Typography className=' col-span-2 text-sm text-[#acb6c7] '>
-                                    Name
-                                </Typography>
-                                <Typography className=' col-span-2 text-sm text-[#acb6c7] '>
-                                    Created
-                                </Typography>
-                                <Typography className=' text-sm text-[#acb6c7] '>
-                                    Actions
-
-                                </Typography>
+                {isLoadingHistory ? (
+                    <div className=' flex flex-col justify-center items-center h-full w-full'>
+                        <Lottie animationData={loading} loop={true} className=' w-[7rem]' />
+                    </div>
+                ) : (
+                    <div className=' flex flex-col gap-3 h-full overflow-y-auto pr-2'>
+                        {historyData.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-20 text-center">
+                                <Typography variant="body" className="text-gray-400">No history found.</Typography>
                             </div>
-                            <div className=' h-full  w-full pt-2 divide-y-0'>
-                                {historyData.map((item, index) =>
-                                    <div key={index} className=' h-14 grid grid-cols-5 w-full place-content-center md:px-10 '>
-                                        <Typography className=' text-sm text-[#344767] col-span-2 '>
+                        ) : (
+                            historyData.map((item, index) => (
+                                <div key={index} className='p-4 rounded-2xl border border-gray-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all group'>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <Typography variant="body" className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                                             {item?.pdf_name}.pdf
                                         </Typography>
-                                        <Typography className=' text-sm text-[#344767]  col-span-2'>
-                                            {formatDate(item.created_at)}
-                                        </Typography>
-
-                                        <div className=' gap-4 flex bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent items-center'>
-                                            <ArrowDownTrayIcon onClick={() => generateAndDownload(index)} className=' w-6 h-6 cursor-pointer text-[#1762df]  hover:text-blue-600' />
-                                            <PencilSquareIcon onClick={() => { setConfirmPopup(index); setHistoryOpen(false) }} className=' w-6 h-6 cursor-pointer text-[#1762df] hover:text-blue-600 ' />
+                                        <div className='flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
+                                            <IconButton variant="ghost" className="h-8 w-8 text-blue-600" onClick={() => generateAndDownload(index)}>
+                                                <ArrowDownTrayIcon className=' w-4 h-4' />
+                                            </IconButton>
+                                            <IconButton variant="ghost" className="h-8 w-8 text-blue-600" onClick={() => { setConfirmPopup(index); setHistoryOpen(false) }}>
+                                                <PencilSquareIcon className=' w-4 h-4' />
+                                            </IconButton>
                                         </div>
-
                                     </div>
-                                )
-
-                                }
-                            </div>
-
-                        </div>
-
-                }
-
-
+                                    <Typography variant="tiny" className="text-gray-400 font-medium">
+                                        {formatDate(item.created_at)}
+                                    </Typography>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
             </Drawer>
 
         </div >

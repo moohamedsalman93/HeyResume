@@ -1,8 +1,12 @@
-
 import React, { useEffect, useState } from 'react'
-import { Button, Input, Typography } from '@material-tailwind/react'
+import Button from './ui/Button';
+import Input from './ui/Input';
+import Typography from './ui/Typography';
+import Card, { CardBody } from './ui/Card';
+import IconButton from './ui/IconButton';
 import DatePicker from './DatePicker';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { twMerge } from 'tailwind-merge';
 
 
 
@@ -50,80 +54,78 @@ function AwardSection({ exampleData, setExampleData }) {
     <div className=' w-full h-full py-6 px-2 flex flex-col gap-4 '>
 
       {Array(noofContent).fill().map((_, i) => (
-        <div key={i} className={` flex flex-col md:grid grid-cols-2 gap-10  p-4 border rounded-md  py-4 bg-white shadow-lg min-h-[30rem]`}>
+        <Card key={i} className="overflow-hidden border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+          <CardBody className="p-0">
+            <div className=' px-6 py-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center'>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-sm">
+                  <PlusIcon className=" h-4 w-4" />
+                </div>
+                <Typography variant="h6" className='text-gray-900'>
+                  Award & Achievement
+                </Typography>
+              </div>
 
-          <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
-            <Typography
-              variant="h6"
-              className='text-[#768499]'
-            >
-              Award and Acheivement {i + 1}
-            </Typography>
-
-            <div className=' w-fit flex gap-4 h-full'>
-
-              <Button onClick={() => handleRemoveAward(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
-                remove
-              </Button>
-              {/* <TrashIcon onClick={() => handleRemoveAward(i)} className=' w-6 h-6 text-red-200 cursor-pointer hover:text-red-500 transition-colors duration-700'/> */}
-
+              <IconButton
+                variant="ghost"
+                color="red"
+                onClick={() => handleRemoveAward(i)}
+                className="h-8 w-8"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </IconButton>
             </div>
 
-          </div>
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Input
+                label="Title"
+                placeholder="e.g. Employee of the Month"
+                value={exampleData.awards[i]?.title}
+                onChange={handleInputChange('title', i)}
+              />
+              <Input
+                label="Awarder / Organization"
+                placeholder="e.g. Google"
+                value={exampleData.awards[i]?.awarder}
+                onChange={handleInputChange('awarder', i)}
+              />
 
-          <Input
-            variant="static"
-            label="Title"
-            placeholder=""
-            value={exampleData.awards[i]?.title}
-            onChange={handleInputChange('title', i)}
+              <div className='md:col-span-2'>
+                <DatePicker
+                  title="Date Received"
+                  date={exampleData.awards[i]?.date}
+                  handleInputChange={handleInputChange}
+                  field="date"
+                  index={i}
+                />
+              </div>
 
-          />
-          <Input
-            variant="static"
-            label="Provider"
-            placeholder="Software Engineer"
-            value={exampleData.awards[i]?.awarder}
-            onChange={handleInputChange('awarder', i)}
-          />
-
-
-
-
-          <div className='col-span-2  flex flex-col-reverse md:flex-row items-start gap-2 md:gap-0 justify-between'>
-            <div className=' flex flex-col gap-1 justify-start w-full md:w-fit  '>
-              <Typography className=" text-[#a2a2a2] text-sm font-normal">
-                Summary
-              </Typography>
-
-              <div className=' flex items-center gap-2 w-full '>
-                <textarea placeholder="Resume maker is an web application , which helps to create ATS resume " value={exampleData.awards[i]?.summary} onChange={handleInputChange('summary', i)} className=' p-1 text-sm  min-h-[7rem] w-full    md:w-[25rem] transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
-
+              <div className='flex flex-col gap-2 md:col-span-2'>
+                <Typography variant="small" className="font-bold text-gray-700 uppercase tracking-wider">
+                  Summary
+                </Typography>
+                <textarea
+                  placeholder="Describe the award and your achievement..."
+                  value={exampleData.awards[i]?.summary}
+                  onChange={handleInputChange('summary', i)}
+                  className='w-full p-3 text-sm min-h-[7rem] bg-gray-50 border border-transparent rounded-xl text-gray-600 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none'
+                />
               </div>
             </div>
-            <DatePicker isDisable={false} key={1} title={"Date"} date={exampleData.awards[i]?.date || 'Jan-2024'} handleInputChange={handleInputChange} field={"date"} index={i} />
-          </div>
+          </CardBody>
+        </Card>
+      ))}
 
-          <div className=' col-span-2 w-full flex justify-center items-center'>
-            {noofContent == i + 1 &&
-              < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddAward}>
-                Add another
-              </Button>
-            }
-          </div>
-
-        </div>
-      ))
-      }
-      {noofContent == 0 &&
-        <div className=' col-span-2 w-full flex justify-center items-center'>
-          
-            < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddAward}>
-              Add Award
-            </Button>
-          
-        </div>
-      }
+      <div className='flex justify-center py-4'>
+        <Button
+          variant="outline"
+          onClick={handleAddAward}
+          className="group border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white transition-all duration-300"
+        >
+          <PlusIcon className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+          {noofContent === 0 ? "Add First Award" : "Add Another Award"}
+        </Button>
+      </div>
     </div >
   )
 }

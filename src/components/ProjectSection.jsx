@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Checkbox, Input, Typography } from '@material-tailwind/react'
-import DatePicker from './DatePicker';
-import { MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
+import Button from './ui/Button';
+import Input from './ui/Input';
+import Typography from './ui/Typography';
+import Card, { CardBody } from './ui/Card';
+import IconButton from './ui/IconButton';
+import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { twMerge } from 'tailwind-merge';
 
 
 
@@ -84,109 +88,109 @@ function ProjectSection({ exampleData, setExampleData }) {
     <div className=' w-full h-full py-6 px-2 flex flex-col gap-4 '>
 
       {Array(noofContent).fill().map((_, i) => (
-        <div key={i} className={` flex flex-col md:grid grid-cols-2 gap-10  p-4 border rounded-md  py-4 bg-white shadow-lg`}>
+        <Card key={i} className="overflow-hidden border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+          <CardBody className="p-0">
+            <div className=' px-6 py-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center'>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-violet-600 text-white flex items-center justify-center font-bold text-sm">
+                  {i + 1}
+                </div>
+                <Typography variant="h6" className='text-gray-900'>
+                  Project
+                </Typography>
+              </div>
 
-          <div className=' h-10 w-full border-b flex justify-between items-center col-span-2'>
-            <Typography
-              variant="h6"
-              className='text-[#768499]'
-            >
-              Project {i + 1}
-            </Typography>
-
-            <div className=' w-fit flex gap-4 h-full'>
-
-
-
-              <Button onClick={() => handleRemoveProject(i)} variant="outlined" className=' h-7 items-center flex' color='red'>
-                remove
-              </Button>
-
+              <IconButton
+                variant="ghost"
+                color="red"
+                onClick={() => handleRemoveProject(i)}
+                className="h-8 w-8"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </IconButton>
             </div>
 
-          </div>
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Input
+                label="Project Name"
+                placeholder="e.g. Resume Maker"
+                value={exampleData.projects[i]?.name}
+                onChange={handleInputChange('name', i)}
+              />
+              <Input
+                label="Project Link"
+                placeholder="e.g. https://github.com/..."
+                value={exampleData.projects[i]?.url}
+                onChange={handleInputChange('url', i)}
+              />
 
-          <Input
-            variant="static"
-            label="Project Name"
-            placeholder="Resume Maker"
-            value={exampleData.projects[i]?.name}
-            onChange={handleInputChange('name', i)}
+              <div className='flex flex-col gap-2 md:col-span-2'>
+                <Typography variant="small" className="font-bold text-gray-700 uppercase tracking-wider">
+                  Description
+                </Typography>
+                <textarea
+                  placeholder="Describe your project, features, and impact..."
+                  value={exampleData.projects[i]?.description}
+                  onChange={handleInputChange('description', i)}
+                  className='w-full p-3 text-sm min-h-[8rem] bg-gray-50 border border-transparent rounded-xl text-gray-600 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none'
+                />
+              </div>
 
-          />
+              <div className='flex flex-col gap-4 md:col-span-2'>
+                <Typography variant="small" className="font-bold text-gray-700 uppercase tracking-wider">
+                  Tools & Technologies
+                </Typography>
 
-
-
-
-          <Input
-            variant="static"
-            label="Project Link"
-            placeholder="https://github.com"
-            value={exampleData.projects[i]?.url}
-            onChange={handleInputChange('url', i)}
-          />
-
-          <div className=' flex flex-col gap-4 justify-start col-span-2 '>
-            <Typography className=" text-[#a2a2a2] text-sm font-normal">
-              Description
-            </Typography>
-
-            <div className=' flex items-center gap-2 w-full '>
-              <textarea placeholder="Resume maker is an web application , which helps to create ATS resume " value={exampleData.projects[i]?.description} onChange={handleInputChange('description', i)} className=' p-1 text-sm  min-h-[8rem]   w-full overflow-hidden transition-transform duration-500 border rounded-md text-[#475c66] border-[#b0bec5]' />
+                <div className="flex flex-wrap gap-4">
+                  {exampleData.projects[i]?.keywords?.map((item, index) => (
+                    <div key={index} className='flex items-center gap-2 group/item bg-gray-50 p-2 rounded-xl border border-gray-100 focus-within:border-violet-500 focus-within:ring-4 focus-within:ring-violet-500/10 transition-all'>
+                      <input
+                        value={item}
+                        placeholder="e.g. React"
+                        onChange={handleKeywordChange(i, index)}
+                        className='bg-transparent outline-none text-sm font-medium text-gray-700 w-24 focus:w-32 transition-all'
+                      />
+                      <div className='flex items-center gap-1'>
+                        {exampleData.projects[i]?.keywords.length !== 1 && (
+                          <IconButton
+                            variant="ghost"
+                            color="red"
+                            onClick={() => handleRemoveKeywords(i, index)}
+                            className="h-6 w-6"
+                          >
+                            <MinusIcon className='w-3 h-3' />
+                          </IconButton>
+                        )}
+                        {exampleData.projects[i]?.keywords.length === index + 1 && (
+                          <IconButton
+                            variant="ghost"
+                            color="blue"
+                            onClick={() => handleAddKeywords(i)}
+                            className="h-6 w-6"
+                          >
+                            <PlusIcon className='w-3 h-3' />
+                          </IconButton>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          </CardBody>
+        </Card>
+      ))}
 
-          <div className=' mb-4 flex flex-col gap-4 col-span-2 w-[20rem]'>
-            <Typography className=" text-[#a2a2a2] text-sm font-normal">
-              Tools Used
-            </Typography>
-            {exampleData.projects[i]?.keywords?.map((item, index) =>
-              <div key={index} className=' flex items-center gap-2  ml-4'>
-                <div className=' max-w-[19rem]'>
-                  <Input
-                    variant="static"
-
-                    placeholder="Reactjs"
-                    value={item}
-                    onChange={handleKeywordChange(i, index)}
-                    className=' '
-                  />
-                </div>
-                <div className='flex gap-2'>
-
-                  {exampleData.projects[i]?.keywords.length !== 1 &&
-                    <MinusIcon onClick={() => handleRemoveKeywords(i, index)} className='w-6 h-6 cursor-pointer border-blue-gray-700 text-[#768499] border hover:border-red-500 hover:text-red-500 rounded-full' />
-                  }
-                  {exampleData.projects[i]?.keywords.length == index + 1 &&
-                    <PlusIcon onClick={() => handleAddKeywords(i)} className='w-6 h-6 cursor-pointer text-green-700 hover:text-green-100 hover:border-green-100 border border-green-700 rounded-full' />
-
-                  }
-                </div>
-              </div>)
-
-            }
-          </div>
-
-          <div className=' col-span-2 w-full flex justify-center items-center'>
-            {noofContent == i + 1 &&
-              < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddProjects}>
-                Add another
-              </Button>
-            }
-          </div>
-
-        </div>
-      ))
-      }
-      {
-        <div className=' col-span-2 w-full flex justify-center items-center'>
-          {noofContent == 0 &&
-            < Button variant="outlined" color='green' className=' h-7 items-center flex  ' onClick={handleAddProjects}>
-              Add Project
-            </Button>
-          }
-        </div>
-      }
+      <div className='flex justify-center py-4'>
+        <Button
+          variant="outline"
+          onClick={handleAddProjects}
+          className="group border-violet-600 text-violet-600 hover:bg-violet-600 hover:text-white transition-all duration-300"
+        >
+          <PlusIcon className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+          {noofContent === 0 ? "Add First Project" : "Add Another Project"}
+        </Button>
+      </div>
     </div >
   )
 
