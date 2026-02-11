@@ -18,6 +18,12 @@ export default async function latex(texDoc, opts) {
     await pdftex.makeMemFSFolder('fonts/');
     await xetex.makeMemFSFolder('fonts/');
     await dvipdfmx.makeMemFSFolder('fonts/');
+
+    await Promise.all([
+      pdftex.setTexliveEndpoint('/texlive/pdftex/'),
+      xetex.setTexliveEndpoint('/texlive/xetex/'),
+      dvipdfmx.setTexliveEndpoint('/texlive/xetex/')
+    ]);
   }
 
   const fonts = await resolveAssets(opts.fonts || []);

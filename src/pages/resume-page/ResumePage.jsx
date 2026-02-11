@@ -1,5 +1,4 @@
 import IconButton from '../../components/ui/IconButton';
-import Navbar from '../../components/ui/Navbar';
 import Tooltip from '../../components/ui/Tooltip';
 import Typography from '../../components/ui/Typography';
 import Popover, { PopoverHandler, PopoverContent } from '../../components/ui/Popover';
@@ -8,8 +7,6 @@ import Dialog, { DialogHeader, DialogBody, DialogFooter } from '../../components
 import Button from '../../components/ui/Button';
 import Tabs, { TabsHeader, Tab } from '../../components/ui/Tabs';
 import Drawer from '../../components/ui/Drawer';
-import Card from '../../components/ui/Card';
-import List, { ListItem } from '../../components/ui/List';
 import React, { useEffect, useState, useRef } from 'react'
 import { pdfjs, Document, Page } from 'react-pdf'
 import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, Bars3Icon, ChevronRightIcon, ClockIcon, CursorArrowRaysIcon, DocumentTextIcon, KeyIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, RocketLaunchIcon, ShareIcon, ShoppingBagIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -30,11 +27,11 @@ import Lottie from "lottie-react";
 import loading from '../../assets/loading.json'
 import nlp from 'compromise';
 import { removeStopwords } from 'stopword';
-import { sanitizeData } from '../../components/FilterText';
-import { GripVertical, Ham, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import latex from '../../lib/latext';
 import getTemplateData from '../../lib/getTemplateData';
 import { twMerge } from 'tailwind-merge';
+import { sanitizeData } from '../../components/FilterText';
 
 
 
@@ -196,24 +193,16 @@ function ResumePage({ isLoading, setIsLoading }) {
 
     //#region save
     const generatePDF = async () => {
+       setIsLoading(true)
         try {
-            const response = await fetch('/api/compile', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(exampleData),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to compile PDF');
-            }
-
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            setPdfUrl(url);
-        } catch (error) {
-            console.error('PDF generation failed:', error);
+            const sanitizedData = sanitizeData(exampleData);
+            const { texDoc, opts } = getTemplateData(sanitizedData);
+            const pdfUrl = await latex(texDoc, opts);
+            setPdfUrl(pdfUrl);
+            setIsLoading(false)
+        } catch (err) {
+            setIsLoading(false)
+            console.log(err)
         }
     };
     //#endregion
@@ -541,29 +530,24 @@ function ResumePage({ isLoading, setIsLoading }) {
                 </div>
 
                 <div className='flex'>
-                    <Popover placement="bottom-end">
-                        <PopoverHandler>
-                            <div className=' flex items-center gap-3 cursor-pointer group'>
-                                <div className=' h-10 w-10 bg-white/10 border border-white/[0.06] rounded-full overflow-hidden group-hover:ring-2 ring-indigo-500/20 transition-all'>
-                                    <img src={userDetails?.profileImage} alt="" className=' w-full h-full object-cover' />
+                    {userDetails?.uuid && (
+                        <Popover placement="bottom-end">
+                            <PopoverHandler>
+                                <div className=' flex items-center gap-3 cursor-pointer group'>
+                                    <div className=' h-10 w-10 bg-white/10 border border-white/[0.06] rounded-full overflow-hidden group-hover:ring-2 ring-indigo-500/20 transition-all'>
+                                        <img src={userDetails?.profileImage} alt="" className=' w-full h-full object-cover' />
+                                    </div>
+                                    <div className=' md:flex flex-col hidden'>
+                                        <Typography variant="h6" className='text-slate-200 group-hover:text-indigo-400 transition-colors leading-none mb-1'>{userDetails?.name}</Typography>
+                                        <Typography variant="small" className='text-slate-500 leading-none'>{userDetails?.email}</Typography>
+                                    </div>
                                 </div>
-                                <div className=' md:flex flex-col hidden'>
-                                    <Typography variant="h6" className='text-slate-200 group-hover:text-indigo-400 transition-colors leading-none mb-1'>{userDetails?.name}</Typography>
-                                    <Typography variant="small" className='text-slate-500 leading-none'>{userDetails?.email}</Typography>
-                                </div>
-                            </div>
-                        </PopoverHandler>
-                        <PopoverContent className="min-w-[14rem] p-1">
-                            <div className=' p-2 hover:bg-white/5 rounded-lg flex items-center justify-between text-slate-300 cursor-pointer transition-colors'>
-                                <Typography variant="body" className="font-medium">Order</Typography>
-                                <ShoppingBagIcon className=' h-4 w-4 text-slate-500' />
-                            </div>
-                            <div onClick={handleLogout} className=' p-2 hover:bg-red-500/10 rounded-lg flex items-center justify-between text-red-400 cursor-pointer transition-colors'>
-                                <Typography variant="body" className="font-medium text-inherit">Log out</Typography>
-                                <ArrowRightStartOnRectangleIcon className=' h-4 w-4' />
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+                            </PopoverHandler>
+                            <PopoverContent className="min-w-[14rem] p-1">
+
+                            </PopoverContent>
+                        </Popover>
+                    )}
                 </div>
             </div>
 
@@ -605,12 +589,14 @@ function ResumePage({ isLoading, setIsLoading }) {
                             </Typography>
                         </div>
 
-                        <div onClick={handleOpen} className=' mt-2 cursor-pointer w-full h-10 px-4 rounded-xl flex items-center gap-3 hover:bg-white/[0.04] group transition-all '>
-                            <ClockIcon className=' h-5 w-5 text-slate-500 group-hover:text-indigo-400 transition-colors' />
-                            <Typography variant="body" className={`text-slate-500 font-medium group-hover:text-indigo-400 transition-colors`}>
-                                History
-                            </Typography>
-                        </div>
+                        {userDetails?.uuid && (
+                            <div onClick={handleOpen} className=' mt-2 cursor-pointer w-full h-10 px-4 rounded-xl flex items-center gap-3 hover:bg-white/[0.04] group transition-all '>
+                                <ClockIcon className=' h-5 w-5 text-slate-500 group-hover:text-indigo-400 transition-colors' />
+                                <Typography variant="body" className={`text-slate-500 font-medium group-hover:text-indigo-400 transition-colors`}>
+                                    History
+                                </Typography>
+                            </div>
+                        )}
 
                         <div onClick={() => setAiOpen(true)} className='cursor-pointer w-full h-10 px-4 rounded-xl flex items-center gap-3 hover:bg-white/[0.04] group transition-all '>
                             <RocketLaunchIcon className=' h-5 w-5 text-slate-500 group-hover:text-indigo-400 transition-colors' />
@@ -625,6 +611,15 @@ function ResumePage({ isLoading, setIsLoading }) {
                                 Keywords
                             </Typography>
                         </div>
+
+                        {userDetails?.uuid && (
+                            <div onClick={handleLogout} className='cursor-pointer w-full h-10 px-4 rounded-xl flex items-center gap-3 hover:bg-red-500/10 group transition-all text-red-400'>
+                                <ArrowRightStartOnRectangleIcon className=' h-5 w-5' />
+                                <Typography variant="body" className={`font-medium transition-colors text-inherit`}>
+                                    Log out
+                                </Typography>
+                            </div>
+                        )}
                     </div>
                 </div>
 

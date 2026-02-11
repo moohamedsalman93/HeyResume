@@ -6,12 +6,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',
       workbox: {
-        cleanupOutdatedCaches: true,
-        clientsClaim: true,
-        skipWaiting: true,
         runtimeCaching: [
           {
             urlPattern: /.*\.wasm$/,
@@ -28,5 +23,14 @@ export default defineConfig({
       },
     })
   ],
+  server: {
+    proxy: {
+      '/texlive': {
+        target: 'https://texlive2.swiftlatex.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/texlive/, ''),
+      },
+    },
+  },
 
 });

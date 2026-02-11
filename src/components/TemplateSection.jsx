@@ -32,11 +32,6 @@ function TemplateSection({ exampleData, setExampleData, handleImageClick }) {
               alt={`Template ${i + 1}`}
               className='cursor-zoom-in transition-transform duration-500 group-hover:scale-105'
             />
-            {(i != 0 && i != 1) && (
-              <div className="absolute top-2 right-2 bg-surface-2/90 backdrop-blur-sm p-1 rounded-lg border border-amber-500/20 shadow-sm">
-                <img src={premiumIcon} alt="Premium" className='w-4 h-4' />
-              </div>
-            )}
           </div>
 
           <div className="flex items-center gap-2">
