@@ -1,5 +1,5 @@
-import { IconButton, Navbar, Tooltip, Typography } from '@material-tailwind/react'
-import React, { useEffect, useState } from 'react'
+import { IconButton, Navbar, Tooltip, Typography, Popover, PopoverHandler, PopoverContent, Progress, Dialog, DialogHeader, DialogBody, DialogFooter, Button, Tabs, TabsHeader, Tab, Drawer, Card, List, ListItem } from '@material-tailwind/react'
+import React, { useEffect, useState, useRef } from 'react'
 import { pdfjs, Document, Page } from 'react-pdf'
 import { ArrowLeftIcon, ArrowRightIcon, ArrowRightStartOnRectangleIcon, ArrowsPointingInIcon, Bars3Icon, ChevronRightIcon, ClockIcon, CursorArrowRaysIcon, DocumentTextIcon, KeyIcon, MinusIcon, PencilIcon, PencilSquareIcon, PlusIcon, RocketLaunchIcon, ShareIcon, ShoppingBagIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
@@ -21,6 +21,8 @@ import nlp from 'compromise';
 import { removeStopwords } from 'stopword';
 import { sanitizeData } from '../../components/FilterText';
 import { GripVertical, Ham, Menu } from 'lucide-react';
+import latex from '../../lib/latext';
+import getTemplateData from '../../lib/getTemplateData';
 
 
 
