@@ -11,7 +11,7 @@ const Checkbox = ({ label, className, containerClassName, id, ...props }) => {
                     type="checkbox"
                     id={checkboxId}
                     className={twMerge(
-                        'peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gray-300 transition-all checked:border-blue-600 checked:bg-blue-600 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20',
+                        'peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-white/20 bg-white/5 transition-all checked:border-indigo-500 checked:bg-indigo-600 hover:border-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20',
                         className
                     )}
                     {...props}
@@ -36,7 +36,7 @@ const Checkbox = ({ label, className, containerClassName, id, ...props }) => {
             {label && (
                 <label
                     htmlFor={checkboxId}
-                    className="cursor-pointer text-sm font-medium text-gray-700 select-none group-hover:text-blue-600 transition-colors"
+                    className="cursor-pointer text-sm font-medium text-slate-400 select-none group-hover:text-indigo-400 transition-colors"
                 >
                     {label}
                 </label>

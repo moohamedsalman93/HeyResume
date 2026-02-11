@@ -25,7 +25,7 @@ function EducationSection({ exampleData, setExampleData }) {
     const handleInputChange = (field, index) => (e) => {
         setExampleData(prevState => {
             const updatedEducation = [...prevState?.education];
-            updatedEducation[index][field] = e.target.value; // Update specific field
+            updatedEducation[index][field] = e.target.value;
             return {
                 ...prevState,
                 education: updatedEducation,
@@ -48,7 +48,7 @@ function EducationSection({ exampleData, setExampleData }) {
                 education: updatedEducation,
             };
         });
-        setNoofContent(noofContent - 1); // Decrease the count of education entries
+        setNoofContent(noofContent - 1);
     };
 
 
@@ -57,16 +57,16 @@ function EducationSection({ exampleData, setExampleData }) {
     }
 
     return (
-        <div className=' w-full h-fit md:p-6  flex flex-col gap-4'>
+        <div className=' w-full h-fit md:p-6 flex flex-col gap-4'>
             {Array(noofContent).fill().map((_, i) => (
-                <Card key={i} className="overflow-hidden border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+                <Card key={i} className="overflow-hidden">
                     <CardBody className="p-0">
-                        <div className=' px-6 py-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center'>
+                        <div className='px-6 py-4 bg-white/[0.02] border-b border-white/[0.06] flex justify-between items-center'>
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-indigo-500/20">
                                     {i + 1}
                                 </div>
-                                <Typography variant="h6" className='text-gray-900'>
+                                <Typography variant="h6" className='text-slate-200'>
                                     Education
                                 </Typography>
                             </div>
@@ -141,7 +141,7 @@ function EducationSection({ exampleData, setExampleData }) {
                 <Button
                     variant="outline"
                     onClick={handleAddEducation}
-                    className="group border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-300"
+                    className="group border-indigo-500/50 text-indigo-400 hover:bg-indigo-500/10 hover:border-indigo-400 transition-all duration-300"
                 >
                     <PlusIcon className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
                     {noofContent === 0 ? "Add First Education" : "Add Another Education"}

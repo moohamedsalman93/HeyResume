@@ -57,7 +57,7 @@ export const PopoverContent = ({ children, className, placement = 'bottom' }) =>
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             className={twMerge(
-                'absolute z-[999] bg-white rounded-xl shadow-xl border border-gray-100 py-2 min-w-[12rem]',
+                'absolute z-[999] bg-surface-2 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl shadow-black/40 py-2 min-w-[12rem]',
                 placementClasses[placement],
                 className
             )}

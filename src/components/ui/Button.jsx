@@ -1,23 +1,22 @@
 import React from 'react';
-import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 const buttonVariants = {
-  primary: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:opacity-90 shadow-md hover:shadow-lg',
-  secondary: 'bg-white text-blue-600 border border-blue-100 hover:bg-blue-50 shadow-sm',
-  outline: 'bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
-  ghost: 'bg-transparent text-gray-600 hover:bg-gray-100',
-  danger: 'bg-red-500 text-white hover:bg-red-600 shadow-md',
+  primary: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40',
+  secondary: 'bg-surface-3 text-slate-200 border border-white/10 hover:bg-surface-4 hover:border-white/20',
+  outline: 'bg-transparent border-2 border-indigo-500/50 text-indigo-400 hover:bg-indigo-500/10 hover:border-indigo-400',
+  ghost: 'bg-transparent text-slate-400 hover:bg-white/5 hover:text-slate-200',
+  danger: 'bg-red-500/90 text-white hover:bg-red-500 shadow-lg shadow-red-500/25',
 };
 
-const Button = ({ 
-  children, 
-  variant = 'primary', 
-  className, 
-  type = 'button', 
-  onClick, 
+const Button = ({
+  children,
+  variant = 'primary',
+  className,
+  type = 'button',
+  onClick,
   disabled = false,
-  ...props 
+  ...props
 }) => {
   return (
     <button

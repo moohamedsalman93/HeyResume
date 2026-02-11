@@ -5,7 +5,7 @@ const Card = ({ children, className, ...props }) => {
     return (
         <div
             className={twMerge(
-                'bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden',
+                'bg-surface-2/80 backdrop-blur-sm rounded-2xl border border-white/[0.06] shadow-lg shadow-black/20 hover:border-white/10 transition-all duration-300 overflow-hidden',
                 className
             )}
             {...props}
@@ -16,7 +16,7 @@ const Card = ({ children, className, ...props }) => {
 };
 
 export const CardHeader = ({ children, className, ...props }) => (
-    <div className={twMerge('px-6 py-4 border-b border-gray-50', className)} {...props}>
+    <div className={twMerge('px-6 py-4 border-b border-white/[0.06]', className)} {...props}>
         {children}
     </div>
 );
@@ -28,7 +28,7 @@ export const CardBody = ({ children, className, ...props }) => (
 );
 
 export const CardFooter = ({ children, className, ...props }) => (
-    <div className={twMerge('px-6 py-4 bg-gray-50/30 border-t border-gray-50', className)} {...props}>
+    <div className={twMerge('px-6 py-4 bg-white/[0.02] border-t border-white/[0.06]', className)} {...props}>
         {children}
     </div>
 );

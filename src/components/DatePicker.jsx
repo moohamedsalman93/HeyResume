@@ -32,7 +32,7 @@ function DatePicker({ date, handleInputChange, field, index, title, isDisable })
 
     return (
         <div ref={inputRef} className="relative flex flex-col gap-1.5">
-            <Typography variant="small" className="font-semibold text-gray-700 ml-1">
+            <Typography variant="small" className="font-semibold text-slate-400 ml-1">
                 {title}
             </Typography>
 
@@ -40,43 +40,43 @@ function DatePicker({ date, handleInputChange, field, index, title, isDisable })
                 <div
                     onClick={() => !isDisable && setIsPickerOpen(!isPickerOpen)}
                     className={twMerge(
-                        "cursor-pointer transition-all duration-200 border px-4 h-10 flex items-center rounded-xl text-gray-600 bg-white min-w-[10rem]",
-                        isPickerOpen ? "border-blue-500 ring-4 ring-blue-500/10" : "border-gray-200 hover:border-gray-300",
-                        isDisable && "opacity-50 cursor-not-allowed bg-gray-50 text-gray-400"
+                        "cursor-pointer transition-all duration-200 border px-4 h-10 flex items-center rounded-xl text-slate-300 bg-white/5 min-w-[10rem]",
+                        isPickerOpen ? "border-indigo-500/50 ring-4 ring-indigo-500/10" : "border-white/10 hover:border-white/20",
+                        isDisable && "opacity-40 cursor-not-allowed text-slate-500"
                     )}
                 >
                     <Typography variant="body" className="font-medium text-inherit">
                         {isDisable ? "Present" : (date || "Select Date")}
                     </Typography>
-                    <CalendarDateRangeIcon className="w-4 h-4 absolute right-4 text-gray-400" />
+                    <CalendarDateRangeIcon className="w-4 h-4 absolute right-4 text-slate-500" />
                 </div>
 
                 {isPickerOpen && (
-                    <div className="bg-white min-w-[14rem] absolute border border-gray-100 shadow-2xl bottom-full mb-2 right-0 rounded-2xl z-[1001] overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
-                        <div className="select-none h-10 border-b border-gray-50 flex items-center justify-between px-4 bg-gray-50/50">
+                    <div className="bg-surface-2 min-w-[14rem] absolute border border-white/[0.08] shadow-2xl shadow-black/50 bottom-full mb-2 right-0 rounded-2xl z-[1001] overflow-hidden">
+                        <div className="select-none h-10 border-b border-white/[0.06] flex items-center justify-between px-4 bg-white/[0.02]">
                             <button
                                 onClick={(e) => { e.stopPropagation(); updateDate(selectedMonthData.monthName, selectedMonthData.year - 1); }}
-                                className="p-1 hover:bg-white rounded-md transition-colors"
+                                className="p-1 hover:bg-white/5 rounded-md transition-colors"
                             >
-                                <ArrowLeftIcon className="h-4 w-4 text-gray-600" />
+                                <ArrowLeftIcon className="h-4 w-4 text-slate-400" />
                             </button>
-                            <Typography variant="small" className="font-bold text-gray-900">{selectedMonthData.year}</Typography>
+                            <Typography variant="small" className="font-bold text-white">{selectedMonthData.year}</Typography>
                             <button
                                 onClick={(e) => { e.stopPropagation(); updateDate(selectedMonthData.monthName, selectedMonthData.year + 1); }}
-                                className="p-1 hover:bg-white rounded-md transition-colors"
+                                className="p-1 hover:bg-white/5 rounded-md transition-colors"
                             >
-                                <ArrowRightIcon className="h-4 w-4 text-gray-600" />
+                                <ArrowRightIcon className="h-4 w-4 text-slate-400" />
                             </button>
                         </div>
-                        <div className="grid grid-cols-3 p-2 gap-1 bg-white">
+                        <div className="grid grid-cols-3 p-2 gap-1">
                             {monthNames.map((month, idx) => (
                                 <button
                                     key={idx}
                                     className={twMerge(
                                         "text-xs py-2.5 rounded-lg flex items-center justify-center font-semibold transition-all duration-200",
                                         selectedMonthData.monthName === month
-                                            ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                                            : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+                                            ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/30"
+                                            : "text-slate-400 hover:bg-white/5 hover:text-indigo-400"
                                     )}
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -96,4 +96,3 @@ function DatePicker({ date, handleInputChange, field, index, title, isDisable })
 }
 
 export default DatePicker;
-

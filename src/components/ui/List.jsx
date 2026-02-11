@@ -16,8 +16,8 @@ export const ListItem = ({ children, className, onClick, active }) => {
             className={twMerge(
                 'px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer flex items-center gap-3',
                 active
-                    ? 'bg-blue-50 text-blue-700 font-semibold'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                    ? 'bg-indigo-500/10 text-indigo-400 font-semibold border border-indigo-500/20'
+                    : 'text-slate-400 hover:bg-white/5 hover:text-slate-200',
                 className
             )}
         >

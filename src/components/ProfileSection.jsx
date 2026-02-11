@@ -5,7 +5,6 @@ import { twMerge } from 'tailwind-merge';
 
 function ProfileSection({ exampleData, setExampleData }) {
 
-
   const handleInputChange = (field) => (e) => {
     setExampleData(prevState => ({
       ...prevState,
@@ -17,7 +16,7 @@ function ProfileSection({ exampleData, setExampleData }) {
   };
 
   return (
-    <div className=' w-full h-full p-6 flex flex-col gap-6 bg-white rounded-2xl border border-gray-100 shadow-sm'>
+    <div className='w-full h-full p-6 flex flex-col gap-6 bg-surface-2/60 rounded-2xl border border-white/[0.06]'>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
           label="Full Name"
@@ -53,14 +52,14 @@ function ProfileSection({ exampleData, setExampleData }) {
       </div>
 
       <div className='flex flex-col gap-3'>
-        <Typography variant="small" className="font-bold text-gray-700 uppercase tracking-wider ml-1">
+        <Typography variant="small" className="font-bold text-slate-400 uppercase tracking-wider ml-1">
           Professional Summary
         </Typography>
         <textarea
           placeholder="Briefly describe your professional background and key achievements..."
           value={exampleData?.basics?.summary}
           onChange={handleInputChange('summary')}
-          className='w-full p-4 text-sm min-h-[10rem] bg-gray-50 border border-transparent rounded-2xl text-gray-600 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none resize-none'
+          className='w-full p-4 text-sm min-h-[10rem] bg-white/5 border border-white/10 rounded-2xl text-slate-200 placeholder:text-slate-600 focus:bg-white/[0.07] focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none resize-none'
         />
       </div>
     </div>

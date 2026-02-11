@@ -18,16 +18,13 @@ function SkillsSection({ exampleData, setExampleData }) {
   const handleInputChange = (field, index) => (e) => {
     setExampleData(prevState => {
       const updatedskills = [...prevState.skills];
-      updatedskills[index][field] = e.target.value; // Update specific field
+      updatedskills[index][field] = e.target.value;
       return {
         ...prevState,
         skills: updatedskills,
       };
     });
   };
-
-  //x is outer loop and y is inner loop 
-  //x is exampleData.skills[] loop and y is exampleData.skills.keywords loop[]
 
   const handleTextareaChange = (x, y) => (e) => {
     setExampleData(prevState => {
@@ -74,7 +71,7 @@ function SkillsSection({ exampleData, setExampleData }) {
       return {
         ...prevState,
         skills: prevState.skills.map((skillsItem, index) =>
-          index === x ? { ...skillsItem, keywords: updatedkeywords } : skillsItem // Update specific work item
+          index === x ? { ...skillsItem, keywords: updatedkeywords } : skillsItem
         ),
       };
     });
@@ -85,14 +82,14 @@ function SkillsSection({ exampleData, setExampleData }) {
     <div className=' w-full h-full py-6 px-2 flex flex-col gap-4 '>
 
       {Array(noofContent).fill().map((_, i) => (
-        <Card key={i} className="overflow-hidden border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <Card key={i} className="overflow-hidden">
           <CardBody className="p-0">
-            <div className=' px-6 py-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center'>
+            <div className='px-6 py-4 bg-white/[0.02] border-b border-white/[0.06] flex justify-between items-center'>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-emerald-500/20">
                   {i + 1}
                 </div>
-                <Typography variant="h6" className='text-gray-900'>
+                <Typography variant="h6" className='text-slate-200'>
                   Skill Group
                 </Typography>
               </div>
@@ -116,18 +113,18 @@ function SkillsSection({ exampleData, setExampleData }) {
               />
 
               <div className='flex flex-col gap-4'>
-                <Typography variant="small" className="font-bold text-gray-700 uppercase tracking-wider">
+                <Typography variant="small" className="font-bold text-slate-400 uppercase tracking-wider">
                   Skill Keywords
                 </Typography>
 
                 <div className="flex flex-wrap gap-4">
                   {exampleData.skills[i]?.keywords?.map((item, index) => (
-                    <div key={index} className='flex items-center gap-2 group/item bg-gray-50 p-2 rounded-xl border border-gray-100 focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all'>
+                    <div key={index} className='flex items-center gap-2 group/item bg-white/5 p-2 rounded-xl border border-white/10 focus-within:border-emerald-500/50 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all'>
                       <input
                         value={item}
                         placeholder="e.g. React"
                         onChange={handleTextareaChange(i, index)}
-                        className='bg-transparent outline-none text-sm font-medium text-gray-700 w-24 focus:w-32 transition-all'
+                        className='bg-transparent outline-none text-sm font-medium text-slate-200 placeholder:text-slate-600 w-24 focus:w-32 transition-all'
                       />
                       <div className='flex items-center gap-1'>
                         {exampleData.skills[i]?.keywords.length !== 1 && (
@@ -164,7 +161,7 @@ function SkillsSection({ exampleData, setExampleData }) {
         <Button
           variant="outline"
           onClick={handleAddskills}
-          className="group border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all duration-300"
+          className="group border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-400 transition-all duration-300"
         >
           <PlusIcon className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
           {noofContent === 0 ? "Add First Skill Group" : "Add Another Skill Group"}
@@ -175,6 +172,3 @@ function SkillsSection({ exampleData, setExampleData }) {
 }
 
 export default SkillsSection
-
-
-

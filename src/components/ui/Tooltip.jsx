@@ -26,18 +26,18 @@ const Tooltip = ({ children, content, className, placement = 'top' }) => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         className={twMerge(
-                            'absolute z-[9999] px-2 py-1 bg-gray-900 text-white text-xs font-medium rounded shadow-lg whitespace-nowrap pointer-events-none',
+                            'absolute z-[9999] px-3 py-1.5 bg-surface-3 border border-white/10 text-slate-200 text-xs font-medium rounded-lg shadow-xl shadow-black/30 whitespace-nowrap pointer-events-none',
                             placementClasses[placement],
                             className
                         )}
                     >
                         {content}
                         <div className={twMerge(
-                            'absolute w-2 h-2 bg-gray-900 rotate-45',
-                            placement === 'top' && 'top-full -mt-1 left-1/2 -translate-x-1/2',
-                            placement === 'bottom' && 'bottom-full -mb-1 left-1/2 -translate-x-1/2',
-                            placement === 'left' && 'left-full -ml-1 top-1/2 -translate-y-1/2',
-                            placement === 'right' && 'right-full -mr-1 top-1/2 -translate-y-1/2',
+                            'absolute w-2 h-2 bg-surface-3 border border-white/10 rotate-45',
+                            placement === 'top' && 'top-full -mt-1 left-1/2 -translate-x-1/2 border-t-0 border-l-0',
+                            placement === 'bottom' && 'bottom-full -mb-1 left-1/2 -translate-x-1/2 border-b-0 border-r-0',
+                            placement === 'left' && 'left-full -ml-1 top-1/2 -translate-y-1/2 border-l-0 border-b-0',
+                            placement === 'right' && 'right-full -mr-1 top-1/2 -translate-y-1/2 border-r-0 border-t-0',
                         )} />
                     </motion.div>
                 )}

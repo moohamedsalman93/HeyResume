@@ -36,7 +36,7 @@ const Drawer = ({ open, onClose, children, placement = 'left', className }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm"
+                        className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm"
                     />
                     <motion.div
                         initial={pos.initial}
@@ -44,14 +44,14 @@ const Drawer = ({ open, onClose, children, placement = 'left', className }) => {
                         exit={pos.exit}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                         className={twMerge(
-                            'fixed z-[1000] bg-white shadow-2xl overflow-auto',
+                            'fixed z-[1000] bg-surface-1 border-r border-white/[0.06] shadow-2xl shadow-black/50 overflow-auto',
                             pos.className,
                             className
                         )}
                     >
                         <button
                             onClick={onClose}
-                            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors z-10"
+                            className="absolute top-4 right-4 p-2 text-slate-500 hover:text-slate-300 hover:bg-white/5 rounded-full transition-colors z-10"
                         >
                             <XMarkIcon className="h-5 w-5" />
                         </button>

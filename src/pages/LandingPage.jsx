@@ -72,15 +72,15 @@ function LandingPage() {
     ]
 
     return (
-        <div className='min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-700'>
+        <div className='min-h-screen bg-surface-base text-slate-200'>
             {/* Header / Navbar */}
             <Navbar className="fixed top-0 z-50">
                 <div className="flex items-center justify-between">
                     <NavBrand>
                         <Typography variant="h4" className="flex items-center gap-1">
-                            <span className='bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text font-black'>Hey</span>
-                            <span className="font-black">Resume</span>
-                            <span className="text-blue-600 font-black">!</span>
+                            <span className='bg-gradient-to-r from-blue-400 to-indigo-400 text-transparent bg-clip-text font-black'>Hey</span>
+                            <span className="font-black text-white">Resume</span>
+                            <span className="text-indigo-400 font-black">!</span>
                         </Typography>
                     </NavBrand>
 
@@ -101,7 +101,7 @@ function LandingPage() {
                     </NavContent>
 
                     <button
-                        className="md:hidden p-2 text-slate-600"
+                        className="md:hidden p-2 text-slate-400 hover:text-slate-200 transition-colors"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                     >
                         {isMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
@@ -126,16 +126,16 @@ function LandingPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
                     >
-                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold mb-8 border border-blue-100 shadow-sm">
+                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold mb-8 border border-indigo-500/20">
                             <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
                             </span>
                             Trusted by 100,000+ Professionals & Students
                         </span>
 
                         <Typography variant="h1" className="mb-6 max-w-4xl mx-auto !leading-[1.15]">
-                            Land your <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-transparent bg-clip-text">dream job</span> interview with a premium resume.
+                            Land your <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400 text-transparent bg-clip-text">dream job</span> interview with a premium resume.
                         </Typography>
 
                         <Typography variant="lead" className="mb-10 max-w-2xl mx-auto text-slate-500">
@@ -151,7 +151,7 @@ function LandingPage() {
                             </Button>
                         </div>
 
-                        <Typography variant="small" className="text-slate-400">
+                        <Typography variant="small" className="text-slate-600">
                             ATS-friendly format • No credit card required • Unlimited downloads
                         </Typography>
                     </motion.div>
@@ -167,7 +167,7 @@ function LandingPage() {
                             transition={{ duration: 0.8 }}
                             className="space-y-6"
                         >
-                            <div className="h-12 w-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
                                 <KeyIcon className="h-6 w-6" />
                             </div>
                             <Typography variant="h2">Get Hired Faster with ATS-Optimized Content</Typography>
@@ -176,8 +176,8 @@ function LandingPage() {
                             </Typography>
                             <ul className="grid sm:grid-cols-2 gap-4 pt-4">
                                 {['Smart Keyword Analysis', 'Real-time Preview', 'One-click PDF Export', 'AI-Powered Content'].map((item) => (
-                                    <li key={item} className="flex items-center gap-2 text-slate-700 font-medium">
-                                        <div className="h-5 w-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                    <li key={item} className="flex items-center gap-2 text-slate-300 font-medium">
+                                        <div className="h-5 w-5 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
                                             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
                                         </div>
                                         {item}
@@ -193,18 +193,18 @@ function LandingPage() {
                             transition={{ duration: 0.8 }}
                             className="relative group"
                         >
-                            <div className="absolute -inset-4 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-3xl blur-2xl opacity-50 group-hover:opacity-80 transition duration-1000"></div>
+                            <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-3xl blur-2xl opacity-50 group-hover:opacity-80 transition duration-1000"></div>
                             <img
                                 src={LandingPageImg}
                                 alt="Dashboard Preview"
-                                className="relative rounded-2xl shadow-2xl border border-white/50"
+                                className="relative rounded-2xl shadow-2xl shadow-black/40 border border-white/[0.08]"
                             />
                         </motion.div>
                     </div>
                 </section>
 
                 {/* Templates Preview Section */}
-                <section className="bg-slate-50 py-32 mb-32">
+                <section className="bg-surface-1/50 py-32 mb-32 border-y border-white/[0.04]">
                     <div className="container mx-auto px-4">
                         <div className="grid lg:grid-cols-2 gap-20 items-center">
                             <motion.div
@@ -217,18 +217,18 @@ function LandingPage() {
                                     initial={{ x: -60, rotate: -5 }}
                                     whileInView={{ x: -80, rotate: -10 }}
                                     src="https://latexresu.me/static/1.png"
-                                    className="absolute w-64 rounded-xl shadow-xl border border-slate-200 z-10"
+                                    className="absolute w-64 rounded-xl shadow-xl shadow-black/40 border border-white/10 z-10"
                                 />
                                 <motion.img
                                     initial={{ y: 0 }}
                                     src="https://latexresu.me/static/2.png"
-                                    className="absolute w-64 rounded-xl shadow-2xl border border-white z-20 scale-110"
+                                    className="absolute w-64 rounded-xl shadow-2xl shadow-black/50 border border-white/10 z-20 scale-110"
                                 />
                                 <motion.img
                                     initial={{ x: 60, rotate: 5 }}
                                     whileInView={{ x: 80, rotate: 10 }}
                                     src="https://latexresu.me/static/3.png"
-                                    className="absolute w-64 rounded-xl shadow-xl border border-slate-200 z-10"
+                                    className="absolute w-64 rounded-xl shadow-xl shadow-black/40 border border-white/10 z-10"
                                 />
                             </motion.div>
 
@@ -258,23 +258,23 @@ function LandingPage() {
                 </section>
 
                 {/* Footer */}
-                <footer className="container mx-auto px-4 pt-20 border-t border-slate-100">
+                <footer className="container mx-auto px-4 pt-20 border-t border-white/[0.06]">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-8 pb-10">
                         <div className="text-center md:text-left">
                             <Typography variant="h5" className="mb-2">
-                                <span className='bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text font-black'>Hey</span>
-                                <span className="font-black">Resume</span>
-                                <span className="text-blue-600 font-black">!</span>
+                                <span className='bg-gradient-to-r from-blue-400 to-indigo-400 text-transparent bg-clip-text font-black'>Hey</span>
+                                <span className="font-black text-white">Resume</span>
+                                <span className="text-indigo-400 font-black">!</span>
                             </Typography>
-                            <Typography variant="small" className="text-slate-500">
+                            <Typography variant="small" className="text-slate-600">
                                 © 2024 HeyResume by DivCode Tech. All rights reserved.
                             </Typography>
                         </div>
 
                         <div className="flex gap-8">
-                            <a href="#" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Privacy</a>
-                            <a href="#" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Terms</a>
-                            <a href="#" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Contact</a>
+                            <a href="#" className="text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors">Privacy</a>
+                            <a href="#" className="text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors">Terms</a>
+                            <a href="#" className="text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors">Contact</a>
                         </div>
                     </div>
                 </footer>

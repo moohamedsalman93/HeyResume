@@ -16,7 +16,7 @@ const Navbar = ({ children, className, fullWidth, shadow = true, ...props }) => 
         <nav
             className={twMerge(
                 'w-full transition-all duration-300 border-b border-transparent',
-                isScrolled ? 'bg-white/80 backdrop-blur-md border-gray-100 py-3 shadow-sm' : 'bg-transparent py-5',
+                isScrolled ? 'bg-surface-1/80 backdrop-blur-xl border-white/[0.06] py-3 shadow-lg shadow-black/20' : 'bg-transparent py-5',
                 className
             )}
             {...props}
@@ -43,7 +43,7 @@ export const NavContent = ({ children, className, ...props }) => (
 export const NavMobile = ({ children, open, className, ...props }) => (
     <div
         className={twMerge(
-            'md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 overflow-hidden transition-all duration-300',
+            'md:hidden absolute top-full left-0 w-full bg-surface-1/95 backdrop-blur-xl border-b border-white/[0.06] overflow-hidden transition-all duration-300',
             open ? 'max-h-96 opacity-100 py-4' : 'max-h-0 opacity-0 py-0',
             className
         )}

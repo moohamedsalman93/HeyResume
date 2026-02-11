@@ -25,16 +25,13 @@ function WorkSection({ exampleData, setExampleData }) {
   const handleInputChange = (field, index) => (e) => {
     setExampleData(prevState => {
       const updatedEducation = [...prevState.work];
-      updatedEducation[index][field] = e.target.value; // Update specific field
+      updatedEducation[index][field] = e.target.value;
       return {
         ...prevState,
         work: updatedEducation,
       };
     });
   };
-
-  //x is outer loop and y is inner loop 
-  //x is exampleData.work[] loop and y is exampleData.work.highlights loop[]
 
   const handleTextareaChange = (x, y) => (e) => {
     setExampleData(prevState => {
@@ -73,7 +70,7 @@ function WorkSection({ exampleData, setExampleData }) {
         work: updatedEducation,
       };
     });
-    setNoofContent(noofContent - 1); // Decrease the count of education entries
+    setNoofContent(noofContent - 1);
   };
 
   const handleRemoveHighlights = (x, y) => {
@@ -82,7 +79,7 @@ function WorkSection({ exampleData, setExampleData }) {
       return {
         ...prevState,
         work: prevState.work.map((workItem, index) =>
-          index === x ? { ...workItem, highlights: updatedHighlights } : workItem // Update specific work item
+          index === x ? { ...workItem, highlights: updatedHighlights } : workItem
         ),
       };
     });
@@ -97,14 +94,14 @@ function WorkSection({ exampleData, setExampleData }) {
     <div className=' w-full h-full py-6 md:px-2 flex flex-col gap-4 '>
 
       {Array(noofContent).fill().map((_, i) => (
-        <Card key={i} className="overflow-hidden border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <Card key={i} className="overflow-hidden">
           <CardBody className="p-0">
-            <div className=' px-6 py-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center'>
+            <div className='px-6 py-4 bg-white/[0.02] border-b border-white/[0.06] flex justify-between items-center'>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-blue-500/20">
                   {i + 1}
                 </div>
-                <Typography variant="h6" className='text-gray-900'>
+                <Typography variant="h6" className='text-slate-200'>
                   Experience
                 </Typography>
               </div>
@@ -167,7 +164,7 @@ function WorkSection({ exampleData, setExampleData }) {
 
               <div className='flex flex-col gap-4 md:col-span-2'>
                 <div className="flex items-center justify-between">
-                  <Typography variant="small" className="font-bold text-gray-700 uppercase tracking-wider">
+                  <Typography variant="small" className="font-bold text-slate-400 uppercase tracking-wider">
                     Highlights & Achievements
                   </Typography>
                 </div>
@@ -180,7 +177,7 @@ function WorkSection({ exampleData, setExampleData }) {
                           value={item}
                           placeholder="Describe your impact..."
                           onChange={handleTextareaChange(i, index)}
-                          className='w-full p-3 text-sm min-h-[5rem] bg-gray-50 border border-transparent rounded-xl text-gray-600 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none'
+                          className='w-full p-3 text-sm min-h-[5rem] bg-white/5 border border-white/10 rounded-xl text-slate-200 placeholder:text-slate-600 focus:bg-white/[0.07] focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none'
                         />
                       </div>
                       <div className='flex flex-col gap-2 pt-1 opacity-0 group-hover/item:opacity-100 transition-opacity'>
@@ -217,7 +214,7 @@ function WorkSection({ exampleData, setExampleData }) {
         <Button
           variant="outline"
           onClick={handleAddEducation}
-          className="group border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300"
+          className="group border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-all duration-300"
         >
           <PlusIcon className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
           {noofContent === 0 ? "Add First Experience" : "Add Another Experience"}
